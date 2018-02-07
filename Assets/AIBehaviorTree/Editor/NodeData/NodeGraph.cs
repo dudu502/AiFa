@@ -6,7 +6,8 @@ using UnityEngine.EventSystems;
 
 public class NodeGraph
 {
-    public static string[] ToolBarNames = new[] { "Export Current","Add Sub Tree"};
+    static Color S_ALPHA_COLOR = new Color(0, 0, 0, 0.5f);
+    public static string[] ToolBarNames = new[] { "Export Tree", "Add SubTree"};
     public enum NODETYPE
     {
         ACTION = 0,
@@ -101,12 +102,12 @@ public class NodeGraph
     public Color GetColorByType()
     {
         if (Type == NODETYPE.ACTION)
-            return Color.green;
+            return Color.green - S_ALPHA_COLOR;
         if (Type == NODETYPE.PAIALLEL)
-            return Color.red;
+            return Color.red - S_ALPHA_COLOR;
         if (Type == NODETYPE.RANDOWSELECT)
-            return Color.yellow;
-        return Color.gray;
+            return Color.yellow - S_ALPHA_COLOR;
+        return Color.gray - S_ALPHA_COLOR;
     }
 
 

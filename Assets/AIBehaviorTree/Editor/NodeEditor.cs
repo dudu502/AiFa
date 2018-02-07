@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using AIBehaviorTree;
 using LitJson;
 using UnityEditor;
 using UnityEngine;
@@ -13,21 +12,20 @@ public class NodeEditor : EditorWindow {
     static void ShowEditor()
     {
         NodeEditor editor = GetWindow<NodeEditor>();
-        editor.Init();   
+        editor.Show();
+        editor.Init();
     }
 
     const string TREE_OUTPUTPATH = "/AIBehaviorTree/Resources/tree/";
     const string SCRIPT_OUTPUTPATH = "/AIBehaviorTree/Resources/";
 
     
-    private NodeGraph m_EnterNode;
+    private NodeGraph m_RootNode;
     private void Init()
     {       
-        m_EnterNode = new NodeGraph();
-        m_EnterNode.ToRect();
-
-
-        m_EnterNode.Type = NodeGraph.NODETYPE.SEQUENCE;
+        m_RootNode = new NodeGraph();
+        m_RootNode.ToRect();
+        m_RootNode.Type = NodeGraph.NODETYPE.SEQUENCE;
     }
 
     #region 菜单功能
@@ -84,11 +82,11 @@ public class NodeEditor : EditorWindow {
 
     NodeGraph GetNodeByID(int id)
     {
-        return NodeGraph.FindByID(m_EnterNode,id);
+        return NodeGraph.FindByID(m_RootNode,id);
     }
     NodeGraph GetContainMousePosNode(Vector2 mpos)
     {
-       return NodeGraph.FindByMousePos(m_EnterNode,mpos);
+       return NodeGraph.FindByMousePos(m_RootNode,mpos);
     }
 
     private Vector2 WindowScrollPos;
@@ -123,34 +121,27 @@ public class NodeEditor : EditorWindow {
         
         #endregion
         WindowScrollPos = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height),
-        WindowScrollPos, new Rect(0, 0, 10000, 10000));
-
-
-        if (m_EnterNode != null)
+        WindowScrollPos, new Rect(0, 0, 10000, 10000));      
+        if (m_RootNode != null)
         {
-            DrawCurvesImpl(m_EnterNode);
-            BeginWindows();
-            
-            InitWindow(m_EnterNode);
+            DrawCurvesImpl(m_RootNode);
+            BeginWindows();           
+            InitWindow(m_RootNode);
             EndWindows();
-           
-        }
-
-        
-        GUI.EndScrollView();  //结束 ScrollView 窗口  
+        }        
+        GUI.EndScrollView(); 
     }
 
     void InitWindow(NodeGraph parent)
     {
         string title = parent.Parent == null ? "Root" : string.Format("No.{0}", parent.Parent.Nodes.IndexOf(parent));
-        GUI.color = parent.GetColorByType();
-        
+        GUI.color = parent.GetColorByType();      
         parent.NodeRect = GUI.Window(parent.ID, parent.NodeRect, DrawNodeWindow, new GUIContent(title));
-        GUI.color = Color.white;
+        GUI.color = Color.black;
         for (int i = 0; i < parent.Nodes.Count; ++i)
         {
             InitWindow(parent.Nodes[i]);
-        }
+        }    
     }
 
     private TextAsset m_CurrentTextAsset = null;
@@ -160,10 +151,8 @@ public class NodeEditor : EditorWindow {
         {
             m_CurrentTextAsset = Selection.objects[0] as TextAsset;
             if (m_CurrentTextAsset == null)
-            {
-                //EditorUtility.DisplayDialog("格式有误","希望选中的是一个TextAsset","ok");
                 return;
-            }  
+
             JsonData jd = null; 
             try
             {
@@ -171,10 +160,9 @@ public class NodeEditor : EditorWindow {
             }
             catch (Exception e)
             {
-                //EditorUtility.DisplayDialog("格式有误", "希望打开的是一个json数据", "ok");
                 return;
             }
-            m_EnterNode = NodeGraph.CreateNodeGraph(jd);
+            m_RootNode = NodeGraph.CreateNodeGraph(jd);
         }       
     }
 
@@ -184,7 +172,6 @@ public class NodeEditor : EditorWindow {
         var node = GetNodeByID(id);
         if (node == null)
             return;
-
         EditorGUILayout.BeginVertical("box");
         node.Name = EditorGUILayout.TextField("Name", node.Name);
         node.Type = (NodeGraph.NODETYPE)EditorGUILayout.EnumPopup("Type", node.Type);
@@ -222,9 +209,9 @@ public class NodeEditor : EditorWindow {
         if(node.ToolBarSelectIndex == 0)
         {
             EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.HelpBox("导出当前节点为根节点的数据,导出格式xxx", MessageType.Info);
+            EditorGUILayout.HelpBox("Export Tree (Input Export Tree File Name)", MessageType.Info);
             node.OutPutPath = EditorGUILayout.TextField("", node.OutPutPath);
-            if (node.OutPutPath != "" && GUILayout.Button("导出文件"))
+            if (node.OutPutPath != "" && GUILayout.Button("Export Tree"))
             {
                 OnExportAllHandler(node);
             }
@@ -233,7 +220,7 @@ public class NodeEditor : EditorWindow {
         else if(node.ToolBarSelectIndex == 1)
         {
             EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.HelpBox("设置子树", MessageType.Info);
+            EditorGUILayout.HelpBox("Set SubTree (Drag In Tree Data)", MessageType.Info);
             node.SubTreeAsset = EditorGUILayout.ObjectField("SubTree TextAsset", node.SubTreeAsset, typeof(TextAsset)) as TextAsset;
             if (node.SubTreeAsset != null && GUILayout.Button("Add SubTree"))
             {
