@@ -149,7 +149,7 @@ namespace AIBehaviorTree
         /// <summary>
         /// Need Override
         /// </summary>
-        public virtual void Update()
+        public virtual void Update(float dt)
         {
             
         }

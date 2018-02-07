@@ -11,10 +11,10 @@ namespace AIBehaviorTree
 {
     public class AI:MonoBehaviour
     {
-        //public TextAsset xml;
-        public TextAsset m_JsonAiTree;
-        
+        public TextAsset m_JsonAiTree;        
         public float m_AutoRestartIntervalSecs;
+        public float m_UpdateIntervalSecs = 0.1f;
+        private float m_UpdatePassedSecs = 0;
         public List<string> m_StrExecutings = new List<string>();
         AINode m_Root = null;
         List<AINode> m_ListExecutingNodes = new List<AINode>();
@@ -28,21 +28,8 @@ namespace AIBehaviorTree
         public object UserData { get; set; }
         public void Init()
         {
-            /*
-            var list = new List<AINodeConfigData>(); 
-            XmlDocument x = new XmlDocument();
-            x.LoadXml(xml.text);
-            DataInput.ParseXML(list, typeof(AINodeConfigData),x.GetElementsByTagName("Root")[0].ChildNodes);
-            AINode node = AINodeConfigData.CreateNode(null, "", list[0]);
-            print(node);
-            node.Enter();
-            */
-
-            //m_Root = AINodeConfigData.CreateNode(null, JsonMapper.ToObject<JsonData>(m_JsonAiTree.text), this);
-
             m_Root = AINodeConfigData.Create(JsonMapper.ToObject<JsonData>(m_JsonAiTree.text), this);
             m_Root.OnExitHandler = OnAiExitHandler;
-            //StartAi();
         }
          
         void OnAiExitHandler(bool exitAll)
@@ -98,18 +85,23 @@ namespace AIBehaviorTree
 
         void Update()
         {
-            m_StrExecutings.Clear();
-            if (m_BlAiActive && m_ListExecutingNodes.Count>0)
-            {              
-                for (int i = m_ListExecutingNodes.Count - 1; i > -1; --i)
+            m_UpdatePassedSecs += Time.deltaTime;
+            if(m_UpdatePassedSecs>=m_UpdateIntervalSecs)
+            {               
+                m_StrExecutings.Clear();
+                if (m_BlAiActive && m_ListExecutingNodes.Count > 0)
                 {
-                    if (m_ListExecutingNodes[i] != null)
+                    for (int i = m_ListExecutingNodes.Count - 1; i > -1; --i)
                     {
-                        m_StrExecutings.Add(m_ListExecutingNodes[i].ToString());
-                        m_ListExecutingNodes[i].Update();
+                        if (m_ListExecutingNodes[i] != null)
+                        {
+                            m_StrExecutings.Add(m_ListExecutingNodes[i].ToString());
+                            m_ListExecutingNodes[i].Update(m_UpdatePassedSecs);
+                        }
                     }
                 }
-            }
+                m_UpdatePassedSecs = 0;
+            }         
         }
         public void SetExecutingNode(AINode node)
         {

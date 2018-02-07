@@ -14,11 +14,11 @@ namespace AIBehaviorTree
             
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
-            base.Update();
+            base.Update(dt);
             if (m_UpdateAction != null) 
-                m_UpdateAction(Time.deltaTime);  
+                m_UpdateAction(dt);  
         }
 
         public override void TriggerFunc(string type, object obj)
