@@ -1,0 +1,4 @@
+function detect()
+	return true
+end
+

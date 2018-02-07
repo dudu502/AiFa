@@ -1,0 +1,23 @@
+function detect()
+	return true
+end
+
+function enter()
+	self.UserData:SendFlower()
+end
+local time=0
+function update(dt)
+	time = time+dt
+	if time>3 then
+		self:Break()
+	end
+end
+
+
+function trigger(type,obj)
+
+end
+
+function exit()
+	time=0
+end

@@ -1,0 +1,17 @@
+function detect()
+	return true
+end
+
+function enter()
+	self.UserData:Run2FlowerShop()
+end
+
+function trigger(type,obj)
+	if type=="MoveEnd" and obj=="shop" then
+		self:Break()		
+	end
+end
+
+function exit()
+
+end

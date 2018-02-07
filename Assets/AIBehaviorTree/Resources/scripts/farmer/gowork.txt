@@ -1,0 +1,26 @@
+
+--[[
+    INFO--Name:gowork Type:ACTION Weight:1
+ --]]
+
+function detect()
+    return true
+end
+
+function enter()
+    self.UserData:Run2Work()
+end
+
+function update(dt)
+    
+end
+
+function trigger(type,obj)
+	if type=="MoveEnd" and obj=="work" then
+		self:Break()		
+	end
+end
+
+function exit()
+
+end

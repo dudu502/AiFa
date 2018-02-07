@@ -1,0 +1,18 @@
+function detect()
+	return true
+end
+
+function enter()
+	self.UserData:Run2GirlHome()
+end
+
+
+function trigger(type,obj)
+	if type=="MoveEnd" and obj=="girl" then
+		self:Break()		
+	end
+end
+
+function exit()
+
+end

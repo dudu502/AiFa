@@ -1,0 +1,24 @@
+function detect()
+	return true
+end
+
+function enter()
+	self.UserData:Run2Home()
+end
+
+local athomesecs = 0
+function update(dt)
+
+	
+end
+
+function trigger(type,obj)
+	if type=="MoveEnd" and obj=="home" then
+		self:Break()		
+	end
+end
+
+function exit()
+	print("exit home")
+	athomesecs=0
+end

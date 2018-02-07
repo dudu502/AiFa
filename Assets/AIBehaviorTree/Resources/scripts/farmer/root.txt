@@ -1,0 +1,14 @@
+function detect()
+	return true
+end
+
+function enter()
+	print("Root Enter")
+end
+
+
+
+function exit()
+	print("exit root")
+	
+end

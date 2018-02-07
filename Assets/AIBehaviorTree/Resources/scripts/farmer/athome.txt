@@ -1,0 +1,25 @@
+function detect()
+	return true
+end
+
+function enter()
+	
+end
+
+local athomesecs = 0
+function update(dt)
+
+	athomesecs = athomesecs +dt
+	if athomesecs >5 then
+    		self:Break()
+	end
+end
+
+function trigger(type,obj)
+
+end
+
+function exit()
+	print("exit athome")
+	athomesecs=0
+end

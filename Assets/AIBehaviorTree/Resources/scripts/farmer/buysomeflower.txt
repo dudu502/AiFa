@@ -1,0 +1,20 @@
+function detect()
+	return true
+end
+
+function enter()
+	self.UserData:BuySomeFlower()
+	self:Break()	
+end
+
+function update(dt)
+	
+end
+
+function trigger(type,obj)
+
+end
+
+function exit()
+
+end
