@@ -13,13 +13,12 @@ namespace AIBehaviorTree
     {
         public TextAsset m_JsonAiTree;        
         public float m_AutoRestartIntervalSecs;
-        public float m_UpdateIntervalSecs = 0.1f;
-        private float m_UpdatePassedSecs = 0;
+        public float m_UpdateIntervalSecs = 0.1f;       
         public List<string> m_StrExecutings = new List<string>();
+        float m_UpdatePassedSecs = 0;
         AINode m_Root = null;
         List<AINode> m_ListExecutingNodes = new List<AINode>();
-
-        private bool m_BlAiActive = false;
+        bool m_BlAiActive = false;
         void Start()
         {   
             

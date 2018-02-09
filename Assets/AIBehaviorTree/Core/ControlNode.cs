@@ -20,8 +20,6 @@ namespace AIBehaviorTree
                 switch (Config.type)
                 {                 
                     case NODE_TYPE_SEQUENCE:
-                        //if (m_IEnumer.Current != null) m_IEnumer.Current.Enter();
-                        //else if(m_IEnumer.MoveNext()) m_IEnumer.Current.Enter();
                         m_Children[m_ChildSeqIndex].Enter();
                         break;
                     case NODE_TYPE_RANDOMSELECT:

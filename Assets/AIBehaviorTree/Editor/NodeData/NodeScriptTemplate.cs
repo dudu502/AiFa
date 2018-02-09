@@ -16,28 +16,35 @@ public class NodeScriptTemplate
     {
         string result = string.Format(@"
 --[[
-    INFO--{0}
+    基本信息：{0}
+    创建日期：{1}
  --]]
-",node.ToString());
+
+",node.ToString(),System.DateTime.Now.ToString());
         if (node.Type == NodeGraph.NODETYPE.ACTION)
         {
             result += @"
+--进入条件检测
 function detect()
     return true
 end
 
+--进入调用
 function enter()
 
 end
 
+--每隔dt秒更新
 function update(dt)
     
 end
 
+--事件监听
 function trigger(type,obj)
 
 end
 
+--退出调用
 function exit()
 
 end
@@ -46,6 +53,7 @@ end
         else
         {
             result += @"
+--进入条件检测
 function detect()
     return true
 end

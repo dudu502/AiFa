@@ -113,7 +113,7 @@ public class NodeGraph
 
     public override string ToString()
     {
-        return string.Format("Name:{0} Type:{1} Weight:{2} Path:{3}",Name,Type.ToString(),Weight,OutPutPath);
+        return string.Format("Name:{0} Type:{1} Weight:{2}",Name,Type.ToString(),Weight);
     }
     public static void GetAllNodes(NodeGraph node,List<NodeGraph> result)
     {

@@ -163,6 +163,7 @@ public class NodeEditor : EditorWindow {
                 return;
             }
             m_RootNode = NodeGraph.CreateNodeGraph(jd);
+            m_RootNode.OutPutPath = m_CurrentTextAsset.name;
         }       
     }
 
@@ -211,9 +212,18 @@ public class NodeEditor : EditorWindow {
             EditorGUILayout.BeginVertical("box");
             EditorGUILayout.HelpBox("Export Tree (Input Export Tree File Name)", MessageType.Info);
             node.OutPutPath = EditorGUILayout.TextField("", node.OutPutPath);
-            if (node.OutPutPath != "" && GUILayout.Button("Export Tree"))
+            if (node.OutPutPath != "")
             {
-                OnExportAllHandler(node);
+                if(!File.Exists(Application.dataPath + TREE_OUTPUTPATH + node.OutPutPath + ".json"))
+                {
+                    if(GUILayout.Button("Export Tree"))
+                        OnExportAllHandler(node);
+                }                  
+                else
+                {
+                    if (GUILayout.Button("Save Changes"))
+                        OnExportAllHandler(node);
+                }
             }
             EditorGUILayout.EndVertical();
         }
