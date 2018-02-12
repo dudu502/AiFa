@@ -32,6 +32,8 @@ public class NodeGraph
     public TextAsset SubTreeAsset = null;
 
     public int ToolBarSelectIndex = 0;
+
+    public bool FoldOut = true;
     public NodeGraph()
     {       
         NodeRect = new Rect(0,0,60,50);
@@ -71,7 +73,7 @@ public class NodeGraph
         NodeRect.x = ClickPos.x;
         NodeRect.y = ClickPos.y;
         NodeRect.width = 240;
-        NodeRect.height = 240;
+        NodeRect.height = 280;
         return NodeRect;
     }
 
@@ -89,13 +91,11 @@ public class NodeGraph
     public bool HasPrevChild(NodeGraph child)
     {
         var index = Nodes.IndexOf(child);
-        if (index == -1) return false;
         return index > 0;
     }
     public bool HasNextChild(NodeGraph child)
     {
         var index = Nodes.IndexOf(child);
-        if (index == -1) return false;
         return index < Nodes.Count - 1;
     }
 

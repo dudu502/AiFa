@@ -181,8 +181,16 @@ public class NodeEditor : EditorWindow {
         if (node == null)
             return;
         EditorGUILayout.BeginVertical("box");
-        node.Name = EditorGUILayout.TextField("Name", node.Name);
+
+        EditorGUILayout.BeginVertical("box");
+        node.FoldOut = EditorGUILayout.Foldout(node.FoldOut, "Name (Node Description)");
+        if(node.FoldOut)
+            node.Name = EditorGUILayout.TextField("", node.Name);
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.BeginVertical("box");
         node.Type = (NodeGraph.NODETYPE)EditorGUILayout.EnumPopup("Type", node.Type);
+        EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical("box");
         node.ScriptName = EditorGUILayout.TextField("ScriptName", node.ScriptName);
@@ -238,7 +246,8 @@ public class NodeEditor : EditorWindow {
         else if(node.ToolBarSelectIndex == 1)
         {
             EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.HelpBox("Set SubTree (Drag In Tree Data)", MessageType.Info);
+           
+            EditorGUILayout.HelpBox("Set SubTree (Drag In Tree Data)", MessageType.Info);            
             node.SubTreeAsset = EditorGUILayout.ObjectField("SubTree TextAsset", node.SubTreeAsset, typeof(TextAsset)) as TextAsset;
             if (node.SubTreeAsset != null && GUILayout.Button("Add SubTree"))
             {
@@ -247,7 +256,7 @@ public class NodeEditor : EditorWindow {
             EditorGUILayout.EndVertical();
         }
         EditorGUILayout.EndVertical();
-        GUI.DragWindow(new Rect(0, 0, 1000,20));
+        GUI.DragWindow(new Rect(0, 0, 1000,20));      
     }
 
 
