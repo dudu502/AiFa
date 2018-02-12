@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 public class NodeGraph
 {
-    static Color S_ALPHA_COLOR = new Color(0, 0, 0, 0.5f);
+    static Color S_ALPHA_COLOR = new Color(0, 0, 0, 0.3f);
     public static string[] ToolBarNames = new[] { "Export Tree", "Add SubTree"};
     public enum NODETYPE
     {

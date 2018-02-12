@@ -23,7 +23,10 @@ public class NodeEditor : EditorWindow {
         editor.Init();
         editor.SetSelectTextAsset(asset);
     }
-    
+
+
+    private TextAsset m_CurrentTextAsset = null;
+    private Vector2 WindowScrollPos;
     private NodeGraph m_RootNode;
     private void Init()
     {       
@@ -92,9 +95,6 @@ public class NodeEditor : EditorWindow {
     {
        return NodeGraph.FindByMousePos(m_RootNode,mpos);
     }
-
-    private Vector2 WindowScrollPos;
-    private NodeGraph RightClickNode = null;
     void OnGUI()
     {
         #region EventHandler
@@ -102,20 +102,20 @@ public class NodeEditor : EditorWindow {
         if (Event.current.type == EventType.ContextClick)
         {
             var menu = new GenericMenu();
-            RightClickNode = GetContainMousePosNode(Event.current.mousePosition+ WindowScrollPos);
-            if (RightClickNode != null)
+            var rightClickNode = GetContainMousePosNode(Event.current.mousePosition+ WindowScrollPos);
+            if (rightClickNode != null)
             {
-                menu.AddItem(new GUIContent("Create Child"),false, OnNodeMenuClickCreateChildHandler, RightClickNode);                
-                if(RightClickNode.Parent!=null)
+                menu.AddItem(new GUIContent("Create Child"),false, OnNodeMenuClickCreateChildHandler, rightClickNode);                
+                if(rightClickNode.Parent!=null)
                 {
-                    menu.AddItem(new GUIContent("Delete Current"), false, OnNodeDeleteHandler, RightClickNode);
-                    if (RightClickNode.Parent.HasPrevChild(RightClickNode))
+                    menu.AddItem(new GUIContent("Delete Current"), false, OnNodeDeleteHandler, rightClickNode);
+                    if (rightClickNode.Parent.HasPrevChild(rightClickNode))
                     {
-                        menu.AddItem(new GUIContent("Move Up"), false, OnNodeMoveUpInParentHandler, RightClickNode);
+                        menu.AddItem(new GUIContent("Move Up"), false, OnNodeMoveUpInParentHandler, rightClickNode);
                     }
-                    if(RightClickNode.Parent.HasNextChild(RightClickNode))
+                    if(rightClickNode.Parent.HasNextChild(rightClickNode))
                     {
-                        menu.AddItem(new GUIContent("Move Down"), false, OnNodeMoveDownInParentHandler, RightClickNode);
+                        menu.AddItem(new GUIContent("Move Down"), false, OnNodeMoveDownInParentHandler, rightClickNode);
                     }
                 }
             }
@@ -145,10 +145,9 @@ public class NodeEditor : EditorWindow {
         for (int i = 0; i < parent.Nodes.Count; ++i)
         {
             InitWindow(parent.Nodes[i]);
-        }    
+        }
     }
 
-    private TextAsset m_CurrentTextAsset = null;
     void OnSelectionChange()
     {
         if (Selection.objects.Length > 0)
@@ -168,6 +167,7 @@ public class NodeEditor : EditorWindow {
         }
         catch (Exception e)
         {
+            Debug.Log("Not Json File");
             return;
         }
         m_RootNode = NodeGraph.CreateNodeGraph(jd);
