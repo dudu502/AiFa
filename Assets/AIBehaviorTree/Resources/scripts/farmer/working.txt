@@ -10,7 +10,7 @@ end
 local time=0
 function update(dt)
 	time = time+dt
-	if time>5 then
+	if time>2 then
     		self:Break()
 	end
 end

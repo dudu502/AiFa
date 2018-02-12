@@ -17,14 +17,14 @@ namespace AIBehaviorTree
         public override void Update(float dt)
         {
             base.Update(dt);
-            if (m_UpdateAction != null) 
-                m_UpdateAction(dt);  
+            if (m_BlActive&&m_UpdateAction != null) 
+                m_UpdateAction(dt);
         }
 
         public override void TriggerFunc(string type, object obj)
         {
             base.TriggerFunc(type, obj);
-            if (m_TriggerAction != null)
+            if (m_BlActive&&m_TriggerAction != null)
                 m_TriggerAction(type, obj);
         }
 

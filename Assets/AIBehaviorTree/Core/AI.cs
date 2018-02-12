@@ -11,10 +11,27 @@ namespace AIBehaviorTree
 {
     public class AI:MonoBehaviour
     {
+        /// <summary>
+        /// 树导出路径
+        /// </summary>
+        public const string TREE_OUTPUTPATH = "/AIBehaviorTree/Resources/tree/";
+        /// <summary>
+        /// 脚本导出路径
+        /// </summary>
+        public const string SCRIPT_OUTPUTPATH = "/AIBehaviorTree/Resources/";
+        /// <summary>
+        /// json树结构数据
+        /// </summary>
         public TextAsset m_JsonAiTree;        
+        /// <summary>
+        /// 自动重新开始时间间隔（秒）
+        /// </summary>
         public float m_AutoRestartIntervalSecs;
+        /// <summary>
+        /// 更新时间间隔（秒）
+        /// </summary>
         public float m_UpdateIntervalSecs = 0.1f;       
-        public List<string> m_StrExecutings = new List<string>();
+       
         float m_UpdatePassedSecs = 0;
         AINode m_Root = null;
         List<AINode> m_ListExecutingNodes = new List<AINode>();
@@ -33,7 +50,8 @@ namespace AIBehaviorTree
          
         void OnAiExitHandler(bool exitAll)
         {
-            if(!exitAll)
+            m_BlAiActive = false;
+            if (!exitAll)
                 StartCoroutine(_CoroutineRestart());
         }
 
@@ -43,10 +61,6 @@ namespace AIBehaviorTree
             StartAi();
         }
 
-        public void TriggerFunc(Enum type, object obj)
-        {
-            TriggerFunc(type.ToString(), obj);
-        }
         public void TriggerFunc(string type, object obj)
         {
             for (int i = m_ListExecutingNodes.Count - 1; i > -1; --i)
@@ -87,14 +101,12 @@ namespace AIBehaviorTree
             m_UpdatePassedSecs += Time.deltaTime;
             if(m_UpdatePassedSecs>=m_UpdateIntervalSecs)
             {               
-                m_StrExecutings.Clear();
                 if (m_BlAiActive && m_ListExecutingNodes.Count > 0)
                 {
                     for (int i = m_ListExecutingNodes.Count - 1; i > -1; --i)
                     {
                         if (m_ListExecutingNodes[i] != null)
                         {
-                            m_StrExecutings.Add(m_ListExecutingNodes[i].ToString());
                             m_ListExecutingNodes[i].Update(m_UpdatePassedSecs);
                         }
                     }
@@ -113,6 +125,10 @@ namespace AIBehaviorTree
                 m_ListExecutingNodes.Remove(node);
         }
 
+        public List<AINode> GetExecutingNodes()
+        {
+            return m_ListExecutingNodes;
+        }
 
         void OnDestroy()
         {

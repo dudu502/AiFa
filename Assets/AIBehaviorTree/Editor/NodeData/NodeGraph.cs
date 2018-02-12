@@ -154,8 +154,8 @@ public class NodeGraph
     {
         var jd = new JsonData();
         jd["name"] = data.Name;
-        jd["scriptName"] = data.ScriptName;
         jd["type"] = (int)data.Type;
+        jd["scriptName"] = data.ScriptName;       
         jd["weight"] = data.Weight;
         jd["x"] = data.NodeRect.x;
         jd["y"] = data.NodeRect.y;

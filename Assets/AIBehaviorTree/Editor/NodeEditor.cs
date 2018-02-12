@@ -5,6 +5,7 @@ using System.IO;
 using LitJson;
 using UnityEditor;
 using UnityEngine;
+using AIBehaviorTree;
 
 public class NodeEditor : EditorWindow {
 
@@ -15,10 +16,13 @@ public class NodeEditor : EditorWindow {
         editor.Show();
         editor.Init();
     }
-
-    const string TREE_OUTPUTPATH = "/AIBehaviorTree/Resources/tree/";
-    const string SCRIPT_OUTPUTPATH = "/AIBehaviorTree/Resources/";
-
+    static public void ShowEditor(TextAsset asset)
+    {
+        NodeEditor editor = GetWindow<NodeEditor>();
+        editor.Show();
+        editor.Init();
+        editor.SetSelectTextAsset(asset);
+    }
     
     private NodeGraph m_RootNode;
     private void Init()
@@ -33,7 +37,7 @@ public class NodeEditor : EditorWindow {
     {
         var node = data as NodeGraph;
         JsonData jd = NodeGraph.CreateNodeJsonData(node);
-        var path = Application.dataPath + TREE_OUTPUTPATH + node.OutPutPath +".json";
+        var path = Application.dataPath + AI.TREE_OUTPUTPATH + node.OutPutPath +".json";
         File.WriteAllText(path, jd.ToJson());
         EditorUtility.DisplayDialog("提示", "导出成功"+ path, "ok");
         AssetDatabase.Refresh();
@@ -101,17 +105,17 @@ public class NodeEditor : EditorWindow {
             RightClickNode = GetContainMousePosNode(Event.current.mousePosition+ WindowScrollPos);
             if (RightClickNode != null)
             {
-                menu.AddItem(new GUIContent("创建子节点"),false, OnNodeMenuClickCreateChildHandler, RightClickNode);                
+                menu.AddItem(new GUIContent("Create Child"),false, OnNodeMenuClickCreateChildHandler, RightClickNode);                
                 if(RightClickNode.Parent!=null)
                 {
-                    menu.AddItem(new GUIContent("删除当前节点"), false, OnNodeDeleteHandler, RightClickNode);
+                    menu.AddItem(new GUIContent("Delete Current"), false, OnNodeDeleteHandler, RightClickNode);
                     if (RightClickNode.Parent.HasPrevChild(RightClickNode))
                     {
-                        menu.AddItem(new GUIContent("向上移动"), false, OnNodeMoveUpInParentHandler, RightClickNode);
+                        menu.AddItem(new GUIContent("Move Up"), false, OnNodeMoveUpInParentHandler, RightClickNode);
                     }
                     if(RightClickNode.Parent.HasNextChild(RightClickNode))
                     {
-                        menu.AddItem(new GUIContent("向下移动"), false, OnNodeMoveDownInParentHandler, RightClickNode);
+                        menu.AddItem(new GUIContent("Move Down"), false, OnNodeMoveDownInParentHandler, RightClickNode);
                     }
                 }
             }
@@ -149,22 +153,25 @@ public class NodeEditor : EditorWindow {
     {
         if (Selection.objects.Length > 0)
         {
-            m_CurrentTextAsset = Selection.objects[0] as TextAsset;
-            if (m_CurrentTextAsset == null)
-                return;
-
-            JsonData jd = null; 
-            try
-            {
-                jd = JsonMapper.ToObject<JsonData>(m_CurrentTextAsset.text);
-            }
-            catch (Exception e)
-            {
-                return;
-            }
-            m_RootNode = NodeGraph.CreateNodeGraph(jd);
-            m_RootNode.OutPutPath = m_CurrentTextAsset.name;
+            SetSelectTextAsset(Selection.objects[0] as TextAsset);
         }       
+    }
+
+    public void SetSelectTextAsset(TextAsset txtAsset)
+    {
+        m_CurrentTextAsset = txtAsset;
+        if (txtAsset == null) return;       
+        JsonData jd = null;
+        try
+        {
+            jd = JsonMapper.ToObject<JsonData>(m_CurrentTextAsset.text);
+        }
+        catch (Exception e)
+        {
+            return;
+        }
+        m_RootNode = NodeGraph.CreateNodeGraph(jd);
+        m_RootNode.OutPutPath = m_CurrentTextAsset.name;
     }
 
 
@@ -179,9 +186,10 @@ public class NodeEditor : EditorWindow {
 
         EditorGUILayout.BeginVertical("box");
         node.ScriptName = EditorGUILayout.TextField("ScriptName", node.ScriptName);
+        
         if(node.ScriptName != "")
         {
-            string fullPath = Application.dataPath + SCRIPT_OUTPUTPATH + node.ScriptName + ".txt";
+            string fullPath = Application.dataPath + AI.SCRIPT_OUTPUTPATH + node.ScriptName + ".txt";
             if (!File.Exists(fullPath))
             {
                 if (GUILayout.Button("Create Script"))
@@ -214,7 +222,7 @@ public class NodeEditor : EditorWindow {
             node.OutPutPath = EditorGUILayout.TextField("", node.OutPutPath);
             if (node.OutPutPath != "")
             {
-                if(!File.Exists(Application.dataPath + TREE_OUTPUTPATH + node.OutPutPath + ".json"))
+                if(!File.Exists(Application.dataPath + AI.TREE_OUTPUTPATH + node.OutPutPath + ".json"))
                 {
                     if(GUILayout.Button("Export Tree"))
                         OnExportAllHandler(node);
