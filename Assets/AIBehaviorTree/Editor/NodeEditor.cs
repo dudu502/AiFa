@@ -139,7 +139,7 @@ public class NodeEditor : EditorWindow {
     void InitWindow(NodeGraph parent)
     {
         string title = parent.Parent == null ? "Root" : string.Format("No.{0}", parent.Parent.Nodes.IndexOf(parent));
-        GUI.color = parent.GetColorByType();      
+        GUI.color = NodeGraph.GetColorByType((int)parent.Type);      
         parent.NodeRect = GUI.Window(parent.ID, parent.NodeRect, DrawNodeWindow, new GUIContent(title));
         GUI.color = Color.black;
         for (int i = 0; i < parent.Nodes.Count; ++i)
@@ -245,8 +245,7 @@ public class NodeEditor : EditorWindow {
         }
         else if(node.ToolBarSelectIndex == 1)
         {
-            EditorGUILayout.BeginVertical("box");
-           
+            EditorGUILayout.BeginVertical("box");         
             EditorGUILayout.HelpBox("Set SubTree (Drag In Tree Data)", MessageType.Info);            
             node.SubTreeAsset = EditorGUILayout.ObjectField("SubTree TextAsset", node.SubTreeAsset, typeof(TextAsset)) as TextAsset;
             if (node.SubTreeAsset != null && GUILayout.Button("Add SubTree"))

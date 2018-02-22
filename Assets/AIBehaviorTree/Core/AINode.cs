@@ -105,7 +105,19 @@ namespace AIBehaviorTree
         {
             return m_Parent;
         }
+        public List<AINode> GetGenerations()
+        {
+            List<AINode> gens = new List<AINode>();
+            AINode node = this;
+            do
+            {
+                gens.Add(node);
+                node = node.m_Parent;
 
+            } while (node != null);
+            gens.Reverse();
+            return gens;
+        }
         public void Break()
         {       
             Exit();
@@ -162,7 +174,7 @@ namespace AIBehaviorTree
             return root;
         }
 
-
+        
         public bool IsRoot()
         {
             return GetRoot() == this;
@@ -217,8 +229,6 @@ namespace AIBehaviorTree
         public virtual bool GetExecuting()
         {
             return false;
-        }
-
-       
+        }       
     }
 }

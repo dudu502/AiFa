@@ -99,13 +99,13 @@ public class NodeGraph
         return index < Nodes.Count - 1;
     }
 
-    public Color GetColorByType()
+    public static Color GetColorByType(int type)
     {
-        if (Type == NODETYPE.ACTION)
+        if (type == (int)NODETYPE.ACTION)
             return Color.green - S_ALPHA_COLOR;
-        if (Type == NODETYPE.PAIALLEL)
+        if (type == (int)NODETYPE.PAIALLEL)
             return Color.red - S_ALPHA_COLOR;
-        if (Type == NODETYPE.RANDOWSELECT)
+        if (type == (int)NODETYPE.RANDOWSELECT)
             return Color.yellow - S_ALPHA_COLOR;
         return Color.gray - S_ALPHA_COLOR;
     }
