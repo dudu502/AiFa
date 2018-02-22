@@ -115,26 +115,24 @@ public class NodeGraph
     {
         return string.Format("Name:{0} Type:{1} Weight:{2}",Name,Type.ToString(),Weight);
     }
-    public static void GetAllNodes(NodeGraph node,List<NodeGraph> result)
+    public static void GetAllNodes(NodeGraph node, List<NodeGraph> result)
     {
         result.Add(node);
         foreach (var child in node.Nodes)
         {
-            GetAllNodes(child,result);
+            GetAllNodes(child, result);
         }
     }
     public static NodeGraph FindByID(NodeGraph node, int id)
     {
         List<NodeGraph> all = new List<NodeGraph>();
-        GetAllNodes(node,all);
+        GetAllNodes(node, all);
         foreach (var item in all)
         {
             if (item.ID == id)
                 return item;
         }
-
         return null;
-
     }
 
     public static NodeGraph FindByMousePos(NodeGraph node, Vector3 mpos)
@@ -146,7 +144,6 @@ public class NodeGraph
             if (item.NodeRect.Contains(mpos))
                 return item;
         }
-
         return null;
     }
 

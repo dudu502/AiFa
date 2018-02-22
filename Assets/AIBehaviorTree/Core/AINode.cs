@@ -113,7 +113,6 @@ namespace AIBehaviorTree
             {
                 gens.Add(node);
                 node = node.m_Parent;
-
             } while (node != null);
             gens.Reverse();
             return gens;

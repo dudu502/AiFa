@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 using System.IO;
 
 public class NodeScriptTemplate 
@@ -18,16 +17,16 @@ public class NodeScriptTemplate
 --[[
     基本信息：{0}
     创建日期：{1}
- --]]
+--]]
 
-",node.ToString(),System.DateTime.Now.ToString());
-        if (node.Type == NodeGraph.NODETYPE.ACTION)
-        {
-            result += @"
 --进入条件检测
 function detect()
     return true
 end
+", node.ToString(),System.DateTime.Now.ToString());
+        if (node.Type == NodeGraph.NODETYPE.ACTION)
+        {
+            result += @"
 
 --进入调用
 function enter()
@@ -50,16 +49,6 @@ function exit()
 end
 ";
         }
-        else
-        {
-            result += @"
---进入条件检测
-function detect()
-    return true
-end
-";
-        }
-
         File.WriteAllText(path, result);
         AssetDatabase.Refresh();
     }

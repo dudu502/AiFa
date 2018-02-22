@@ -99,8 +99,8 @@ namespace AIBehaviorTree
         void Update()
         {
             m_UpdatePassedSecs += Time.deltaTime;
-            if(m_UpdatePassedSecs>=m_UpdateIntervalSecs)
-            {               
+            if (m_UpdatePassedSecs >= m_UpdateIntervalSecs)
+            {
                 if (m_BlAiActive && m_ListExecutingNodes.Count > 0)
                 {
                     for (int i = m_ListExecutingNodes.Count - 1; i > -1; --i)
@@ -112,7 +112,7 @@ namespace AIBehaviorTree
                     }
                 }
                 m_UpdatePassedSecs = 0;
-            }         
+            }
         }
         public void SetExecutingNode(AINode node)
         {

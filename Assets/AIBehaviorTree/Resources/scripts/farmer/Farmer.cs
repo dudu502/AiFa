@@ -96,7 +96,6 @@ public class Farmer : MonoBehaviour
                 obj = "girl";
             }
             m_AI.TriggerFunc("MoveEnd", obj);
-        }
-        
+        }        
     }
 }
