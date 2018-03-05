@@ -23,7 +23,6 @@ namespace AIBehaviorTree
         /// </summary>
         public const int NODE_TYPE_PAIALLEL = 3;
 
-
         #region lua extends
         [CSharpCallLua]
         public delegate bool DetectActionFunc();
@@ -43,6 +42,8 @@ namespace AIBehaviorTree
         static LuaEnv m_LuaEnv = new LuaEnv();
         protected LuaTable m_LuaTable = null;
         #endregion
+
+        #region members
         protected List<AINode> m_Children = new List<AINode>();
         protected AINode m_Parent = null;
         protected AINodeConfigData m_Config = null;
@@ -50,7 +51,7 @@ namespace AIBehaviorTree
         protected bool m_BlActive = false;
         protected int m_IntChildWeight = 0;
         protected int m_ChildSeqIndex = 0;
-
+        #endregion
         public Action<bool> OnExitHandler = null;
         public object UserData
         {
