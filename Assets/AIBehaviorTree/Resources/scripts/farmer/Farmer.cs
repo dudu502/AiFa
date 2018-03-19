@@ -18,11 +18,16 @@ public class Farmer : MonoBehaviour
 
     RectTransform target;
     bool movestate = false;
-	void Start ()
+
+    private void Awake()
     {
         m_Rect = GetComponent<RectTransform>();
         m_AI.Init();
         m_AI.UserData = this;
+    }
+    void Start ()
+    {
+        
     }
     public void SendFlower()
     {

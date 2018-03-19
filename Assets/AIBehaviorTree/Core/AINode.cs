@@ -24,23 +24,15 @@ namespace AIBehaviorTree
         public const int NODE_TYPE_PAIALLEL = 3;
 
         #region lua extends
-        [CSharpCallLua]
-        public delegate bool DetectActionFunc();
-
-        [CSharpCallLua]
-        public delegate void TriggerActionFunc(string type, object obj);
-
-        [CSharpCallLua]
-        public delegate void UpdateActionFunc(float time);
-
-        protected DetectActionFunc m_DetectAction = null;       
-        protected Action m_EnterAction = null;
-        protected UpdateActionFunc m_UpdateAction = null;
- 
-        protected Action m_ExitAction = null;      
-        protected TriggerActionFunc m_TriggerAction = null;      
         static LuaEnv m_LuaEnv = new LuaEnv();
         protected LuaTable m_LuaTable = null;
+
+        protected Func<bool> m_DetectAction = null;       
+        protected Action m_EnterAction = null;
+        protected Action<float> m_UpdateAction = null;
+        protected Action m_ExitAction = null;
+        protected Action<string, object> m_TriggerAction = null;      
+    
         #endregion
 
         #region members
