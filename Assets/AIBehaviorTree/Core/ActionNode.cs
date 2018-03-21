@@ -1,5 +1,6 @@
 namespace AIBehaviorTree
 {
+    [AIHelp("AI Action Node")]
     public class ActionNode:AINode
     {
         /// <summary>

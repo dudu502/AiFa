@@ -3,6 +3,7 @@ using Random = UnityEngine.Random;
 
 namespace AIBehaviorTree
 {
+    [AIHelp("AI Control Node")]
     public class ControlNode:AINode
     {
         public ControlNode( AI ai,AINodeConfigData config):base( ai, config)

@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Xml;
 using LitJson;
 using UnityEngine;
+using System.Reflection;
 
 namespace AIBehaviorTree
 {
@@ -133,6 +134,88 @@ namespace AIBehaviorTree
         void OnDestroy()
         {
             m_ListExecutingNodes.Clear();
+        }
+
+
+        public static List<NodeHelpData> CreateHelpDataFromAssembly()
+        {
+            List<NodeHelpData> result = new List<NodeHelpData>();
+            Assembly asm = Assembly.GetExecutingAssembly();
+            Module[] modules = asm.GetModules();
+            Type[] types = modules[0].FindTypes((type, obj) => true, null);
+            foreach (Type t in types)
+            {
+                var node = new NodeHelpData();             
+                var classAtts = t.GetCustomAttributes(true);
+                if (classAtts.Length > 0)
+                {
+                    foreach(var att in classAtts)
+                    {
+                        if(att is AIHelpAttribute)
+                        {
+                            node.ClassName = t.Name;
+                            node.ClassDescribe = ((AIHelpAttribute)att).m_Doc;
+                            result.Add(node);
+                            break;
+                        }
+                    }
+                }
+                var methods = t.GetMethods();
+                foreach(var method in methods)
+                {
+                    var methodAtts = method.GetCustomAttributes(true);
+                    foreach(var mAtt in methodAtts)
+                    {
+                        if(mAtt is AIHelpAttribute)
+                        {
+                            node.Funcs.Add(new NodeHelpData.FuncHelpData()
+                            {
+                                FuncDescribe = ((AIHelpAttribute)mAtt).m_Doc,
+                                Func = method       
+                            });
+                            break;
+                        }
+                    }
+                }
+
+                var fields = t.GetFields();
+                foreach(var field in fields)
+                {
+                    var fieldAtts = field.GetCustomAttributes(true);
+                    foreach (var fAtt in fieldAtts)
+                    {
+                        if(fAtt is AIHelpAttribute)
+                        {
+                            node.Fields.Add(new NodeHelpData.FieldHelpData()
+                            {
+                                Field = field,
+                                FieldDescribe = ((AIHelpAttribute)fAtt).m_Doc
+                            });
+                            break;
+                        }
+                    }
+                }
+
+                var propertys = t.GetProperties();
+                foreach(var property in propertys)
+                {
+                    var propertyAtts = property.GetCustomAttributes(true);
+                    foreach(var pAtt in propertyAtts)
+                    {
+                        if(pAtt is AIHelpAttribute)
+                        {
+                            node.Propertys.Add(new NodeHelpData.PropertyHelpData()
+                            {
+                                Property = property,
+                                PropertyDescribe = ((AIHelpAttribute)pAtt).m_Doc
+                            });
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

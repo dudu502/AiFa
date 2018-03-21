@@ -4,6 +4,7 @@ using XLua;
 
 namespace AIBehaviorTree
 {   
+    [AIHelp("AI Base Node")]
     public abstract class AINode
     {
         /// <summary>
@@ -45,6 +46,8 @@ namespace AIBehaviorTree
         protected int m_ChildSeqIndex = 0;
         #endregion
         public Action<bool> OnExitHandler = null;
+
+        [AIHelp("User Data Provider")]
         public object UserData
         {
             get { return m_Ai.UserData; }           
@@ -110,6 +113,8 @@ namespace AIBehaviorTree
             gens.Reverse();
             return gens;
         }
+
+        [AIHelp("End Current Node")]
         public void Break()
         {       
             Exit();

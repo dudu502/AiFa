@@ -16,7 +16,7 @@ public class AiInspectorEditor : Editor
         EditorGUILayout.EndVertical();
         
         var nodes = aiScript.GetExecutingNodes();
-        if (nodes.Count>0)
+        if (nodes.Count > 0)
         {
             EditorGUILayout.BeginVertical("box");
             foreach (var node in nodes)

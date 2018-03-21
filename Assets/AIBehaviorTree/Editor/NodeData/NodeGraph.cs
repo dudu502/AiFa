@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using LitJson;
 using UnityEngine;
-using UnityEditor;
-using UnityEngine.EventSystems;
 
 public class NodeGraph
 {
@@ -21,18 +19,12 @@ public class NodeGraph
     public int Weight=1;
     public string ScriptName="";
     public List<NodeGraph> Nodes = new List<NodeGraph>();
-
     public Vector2 ClickPos;
-
     public Rect NodeRect;
-
     public NodeGraph Parent = null;
-
     public string OutPutPath = "";
     public TextAsset SubTreeAsset = null;
-
     public int ToolBarSelectIndex = 0;
-
     public bool FoldOut = true;
     public NodeGraph()
     {       
