@@ -151,10 +151,10 @@ namespace AIBehaviorTree
                 {
                     foreach(var att in classAtts)
                     {
-                        if(att is AIHelpAttribute)
+                        if(att is AIDocAttribute)
                         {
                             node.ClassName = t.Name;
-                            node.ClassDescribe = ((AIHelpAttribute)att).m_Doc;
+                            node.ClassDescribe = ((AIDocAttribute)att).m_Doc;
                             result.Add(node);
                             break;
                         }
@@ -166,11 +166,11 @@ namespace AIBehaviorTree
                     var methodAtts = method.GetCustomAttributes(true);
                     foreach(var mAtt in methodAtts)
                     {
-                        if(mAtt is AIHelpAttribute)
+                        if(mAtt is AIDocAttribute)
                         {
                             node.Funcs.Add(new NodeHelpData.FuncHelpData()
                             {
-                                FuncDescribe = ((AIHelpAttribute)mAtt).m_Doc,
+                                FuncDescribe = ((AIDocAttribute)mAtt).m_Doc,
                                 Func = method       
                             });
                             break;
@@ -184,12 +184,12 @@ namespace AIBehaviorTree
                     var fieldAtts = field.GetCustomAttributes(true);
                     foreach (var fAtt in fieldAtts)
                     {
-                        if(fAtt is AIHelpAttribute)
+                        if(fAtt is AIDocAttribute)
                         {
                             node.Fields.Add(new NodeHelpData.FieldHelpData()
                             {
                                 Field = field,
-                                FieldDescribe = ((AIHelpAttribute)fAtt).m_Doc
+                                FieldDescribe = ((AIDocAttribute)fAtt).m_Doc
                             });
                             break;
                         }
@@ -202,12 +202,12 @@ namespace AIBehaviorTree
                     var propertyAtts = property.GetCustomAttributes(true);
                     foreach(var pAtt in propertyAtts)
                     {
-                        if(pAtt is AIHelpAttribute)
+                        if(pAtt is AIDocAttribute)
                         {
                             node.Propertys.Add(new NodeHelpData.PropertyHelpData()
                             {
                                 Property = property,
-                                PropertyDescribe = ((AIHelpAttribute)pAtt).m_Doc
+                                PropertyDescribe = ((AIDocAttribute)pAtt).m_Doc
                             });
                             break;
                         }

@@ -4,7 +4,7 @@ using XLua;
 
 namespace AIBehaviorTree
 {   
-    [AIHelp("AI Base Node")]
+    [AIDoc("AI Base Node")]
     public abstract class AINode
     {
         /// <summary>
@@ -47,7 +47,7 @@ namespace AIBehaviorTree
         #endregion
         public Action<bool> OnExitHandler = null;
 
-        [AIHelp("User Data Provider")]
+        [AIDoc("User Data Provider")]
         public object UserData
         {
             get { return m_Ai.UserData; }           
@@ -114,7 +114,7 @@ namespace AIBehaviorTree
             return gens;
         }
 
-        [AIHelp("End Current Node")]
+        [AIDoc("End Current Node")]
         public void Break()
         {       
             Exit();
