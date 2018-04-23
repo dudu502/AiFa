@@ -39,9 +39,13 @@ public class NodeEditor : EditorWindow {
     void OnExportAllHandler(object data)
     {
         var node = data as NodeGraph;
-        JsonData jd = NodeGraph.CreateNodeJsonData(node);
-        var path = Application.dataPath + AI.TREE_OUTPUTPATH + node.OutPutPath +".json";
-        File.WriteAllText(path, jd.ToJson());
+        //JsonData jd = NodeGraph.CreateNodeJsonData(node);
+        //var path = Application.dataPath + AI.TREE_OUTPUTPATH + node.OutPutPath +".json";
+        //File.WriteAllText(path, jd.ToJson());
+
+        var bytes = NodeGraph.CreateInBinary(node);
+        var path = Application.dataPath + AI.TREE_OUTPUTPATH + node.OutPutPath + ".bytes";
+        File.WriteAllBytes(path, bytes);
         EditorUtility.DisplayDialog("提示", "导出成功"+ path, "ok");
         AssetDatabase.Refresh();
     }
@@ -159,19 +163,34 @@ public class NodeEditor : EditorWindow {
     public void SetSelectTextAsset(TextAsset txtAsset)
     {
         m_CurrentTextAsset = txtAsset;
-        if (txtAsset == null) return;       
-        JsonData jd = null;
+        if (txtAsset == null) return;
+        //JsonData jd = null;
+        //try
+        //{
+        //    jd = JsonMapper.ToObject<JsonData>(m_CurrentTextAsset.text);
+        //}
+        //catch (Exception e)
+        //{
+        //    Debug.Log("Not Json File");
+        //    return;
+        //}
+        //m_RootNode = NodeGraph.CreateNodeGraph(jd);
+        //m_RootNode.OutPutPath = m_CurrentTextAsset.name;
+
+        NodeGraph node = null;
         try
         {
-            jd = JsonMapper.ToObject<JsonData>(m_CurrentTextAsset.text);
+            node = NodeGraph.CreateFromBinary(m_CurrentTextAsset.bytes);
+            m_RootNode = node;
+            m_RootNode.OutPutPath = m_CurrentTextAsset.name;
         }
-        catch (Exception e)
+        catch(Exception e)
         {
-            Debug.Log("Not Json File");
+            Debug.Log("Not Bytes File");
             return;
         }
-        m_RootNode = NodeGraph.CreateNodeGraph(jd);
-        m_RootNode.OutPutPath = m_CurrentTextAsset.name;
+
+
     }
 
 

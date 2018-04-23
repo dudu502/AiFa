@@ -181,5 +181,44 @@ public class NodeGraph
         }
         return node;
     }
+
+
+
+    public static NodeGraph CreateFromBinary(byte[] value)
+    {
+        ByteBuffer buffer = new ByteBuffer(value);
+        NodeGraph data = new NodeGraph();
+        data.ToRect();
+        data.Name = buffer.ReadString();
+        data.Type = (NODETYPE)buffer.ReadByte();
+        data.ScriptName = buffer.ReadString();
+        data.Weight = buffer.ReadInt32();
+        data.NodeRect.x = buffer.ReadFloat();
+        data.NodeRect.y = buffer.ReadFloat();
+        int count = buffer.ReadInt32();
+        for (int i = 0; i < count; ++i)
+        {
+            data.AddNode(CreateFromBinary(buffer.ReadBytes()));
+        }
+        return data;
+    }
+
+    public static byte[] CreateInBinary(NodeGraph data)
+    {
+        ByteBuffer buffer = new ByteBuffer();
+        buffer.WriteString(data.Name);
+        buffer.WriteByte((byte)data.Type);
+        buffer.WriteString(data.ScriptName);
+        buffer.WriteInt32(data.Weight);
+        buffer.WriteFloat(data.NodeRect.x);
+        buffer.WriteFloat(data.NodeRect.y);
+        buffer.WriteInt32(data.Nodes.Count);
+        for (int i = 0; i < data.Nodes.Count; ++i)
+        {
+            buffer.WriteBytes(CreateInBinary(data.Nodes[i]));
+        }
+        return buffer.Getbuffer();
+    }
+
 }
 

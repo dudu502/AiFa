@@ -78,6 +78,44 @@ namespace AIBehaviorTree
             return node;
         }
 
+
+        public static AINode Create(byte[] bytes, AI ai)
+        {
+            AINode node = null;
+            ByteBuffer buffer = new ByteBuffer(bytes);
+            AINodeConfigData config = new AINodeConfigData();
+            config.name = buffer.ReadString();
+            config.type = buffer.ReadByte();
+            config.scriptName = buffer.ReadString();
+            config.weight = buffer.ReadInt32();
+            buffer.ReadFloat();
+            buffer.ReadFloat();
+            if (config.scriptName != "")
+            {
+                TextAsset txt = Resources.Load<TextAsset>(config.scriptName);
+                config.script = txt.text;
+            }
+            else
+            {
+                config.script = "function detect()return true end";
+            }
+            int count = buffer.ReadInt32();
+            if (count > 0)
+            {
+                node = new ControlNode(ai, config);
+                for (int i = 0; i < count; ++i)
+                {
+                    var child = Create(buffer.ReadBytes(), ai);
+                    node.Config.listAINodeConfigData.Add(child.Config);
+                    node.Add(child);
+                }
+            }
+            else
+            {
+                node = new ActionNode(ai, config);
+            }
+            return node;
+        }
         public static AINode Create(JsonData data, AI ai)
         {
             AINode node = null;
