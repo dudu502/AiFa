@@ -11,8 +11,8 @@ public class AiInspectorEditor : Editor
         var aiScript = target as AI; 
         EditorGUILayout.BeginVertical("box");
         base.OnInspectorGUI();
-        if (aiScript.m_JsonAiTree != null && GUILayout.Button("Open NodeEditor"))
-            NodeEditor.ShowEditor(aiScript.m_JsonAiTree);
+        if (aiScript.m_TextDataAiTree != null && GUILayout.Button("Open NodeEditor"))
+            NodeEditor.ShowEditor(aiScript.m_TextDataAiTree);
         EditorGUILayout.EndVertical();
         
         var nodes = aiScript.GetExecutingNodes();

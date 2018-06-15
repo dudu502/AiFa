@@ -21,9 +21,9 @@ namespace AIBehaviorTree
         /// </summary>
         public const string SCRIPT_OUTPUTPATH = "/AIBehaviorTree/Resources/";
         /// <summary>
-        /// json树结构数据
+        /// 树结构数据
         /// </summary>
-        public TextAsset m_JsonAiTree;        
+        public TextAsset m_TextDataAiTree;        
         /// <summary>
         /// 自动重新开始时间间隔（秒）
         /// </summary>
@@ -47,7 +47,7 @@ namespace AIBehaviorTree
         public void Init()
         {
             //m_Root = AINodeConfigData.Create(JsonMapper.ToObject<JsonData>(m_JsonAiTree.text), this);
-            m_Root = AINodeConfigData.Create(m_JsonAiTree.bytes, this);
+            m_Root = AINodeConfigData.Create(m_TextDataAiTree.bytes, this);
             m_Root.OnExitHandler = OnAiExitHandler;
         }
          
