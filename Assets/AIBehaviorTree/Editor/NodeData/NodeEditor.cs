@@ -39,10 +39,6 @@ public class NodeEditor : EditorWindow {
     void OnExportAllHandler(object data)
     {
         var node = data as NodeGraph;
-        //JsonData jd = NodeGraph.CreateNodeJsonData(node);
-        //var path = Application.dataPath + AI.TREE_OUTPUTPATH + node.OutPutPath +".json";
-        //File.WriteAllText(path, jd.ToJson());
-
         var bytes = NodeGraph.CreateInBinary(node);
         var path = Application.dataPath + AI.TREE_OUTPUTPATH + node.OutPutPath + ".bytes";
         File.WriteAllBytes(path, bytes);
@@ -164,19 +160,6 @@ public class NodeEditor : EditorWindow {
     {
         m_CurrentTextAsset = txtAsset;
         if (txtAsset == null) return;
-        //JsonData jd = null;
-        //try
-        //{
-        //    jd = JsonMapper.ToObject<JsonData>(m_CurrentTextAsset.text);
-        //}
-        //catch (Exception e)
-        //{
-        //    Debug.Log("Not Json File");
-        //    return;
-        //}
-        //m_RootNode = NodeGraph.CreateNodeGraph(jd);
-        //m_RootNode.OutPutPath = m_CurrentTextAsset.name;
-
         NodeGraph node = null;
         try
         {

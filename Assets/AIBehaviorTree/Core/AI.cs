@@ -31,8 +31,9 @@ namespace AIBehaviorTree
         /// <summary>
         /// 更新时间间隔（秒）
         /// </summary>
-        public float m_UpdateIntervalSecs = 0.1f;       
-       
+        public float m_UpdateIntervalSecs = 0.1f;
+
+        public bool m_BlLoop = false;
         float m_UpdatePassedSecs = 0;
         AINode m_Root = null;
         List<AINode> m_ListExecutingNodes = new List<AINode>();
@@ -53,7 +54,7 @@ namespace AIBehaviorTree
         void OnAiExitHandler(bool exitAll)
         {
             m_BlAiActive = false;
-            if (!exitAll)
+            if (!exitAll && m_BlLoop)
                 StartCoroutine(_CoroutineRestart());
         }
 

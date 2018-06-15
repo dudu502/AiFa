@@ -22,5 +22,5 @@ function trigger(type,obj)
 end
 
 function exit()
-
+	print("exit go work")
 end

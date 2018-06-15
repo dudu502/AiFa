@@ -6,126 +6,14 @@ using System.Text;
 
 public class ByteBuffer
 {
-    //MemoryStream ms = null;
-    //BinaryReader br = null;
-    //BinaryWriter bw = null;
-    //public ByteBuffer(byte[] source)
-    //{
-    //    ms = new MemoryStream(source);
-    //}
-    //public ByteBuffer()
-    //{
-    //    ms = new MemoryStream();
-    //}
-    //public byte[] Getbuffer() { return ms.GetBuffer(); }
-
-    //public ByteBuffer WriteBool(bool value)
-    //{
-    //    Writer.Write(value);
-    //    return this;
-    //}
-    //public bool ReadBool()
-    //{
-    //    return Reader.ReadBoolean();
-    //}
-
-    //public ByteBuffer WriteByte(byte value)
-    //{
-    //    Writer.Write(value);
-    //    return this;
-    //}
-    //public byte ReadByte() { return Reader.ReadByte(); }
-
-    //public ByteBuffer WriteSByte(sbyte value)
-    //{
-    //    Writer.Write(value);
-    //    return this;
-    //}
-    //public sbyte ReadSByte() { return Reader.ReadSByte(); }
-
-    //public ByteBuffer WriteShort(short value)
-    //{
-    //    Writer.Write(value);
-    //    return this;
-    //}
-    //public short ReadShort() { return Reader.ReadInt16(); }
-    //public ByteBuffer WriteInt32(int value)
-    //{
-    //    Writer.Write(value);
-    //    return this;
-    //}
-    //public int ReadInt32()
-    //{
-    //    return Reader.ReadInt32();
-    //}
-
-    //public ByteBuffer WriteFloat(float value)
-    //{
-    //    Writer.Write(value);
-    //    return this;
-    //}
-    //public float ReadFloat()
-    //{
-    //    return Reader.ReadSingle();
-    //}
-
-    //public ByteBuffer WriteLong(long value)
-    //{
-    //    Writer.Write(value);
-    //    return this;
-    //}
-    //public long ReadLong() { return Reader.ReadInt64(); }
-    //public ByteBuffer WriteString(string value)
-    //{
-    //    Writer.Write(value);
-    //    return this;
-    //}
-
-    //public string ReadString()
-    //{
-    //    return Reader.ReadString();
-    //}
-
-
-    //public ByteBuffer WriteBytes(byte[] value)
-    //{
-    //    WriteInt32(value.Length);
-    //    Writer.Write(value);
-    //    return this;
-    //}
-
-    //public byte[] ReadBytes() { return Reader.ReadBytes(ReadInt32()); }
-
-    //BinaryWriter Writer
-    //{
-    //    get
-    //    {
-    //        bw = bw ?? new BinaryWriter(ms);
-    //        return bw;
-    //    }
-    //}
-    //BinaryReader Reader
-    //{
-    //    get
-    //    {
-    //        br = br ?? new BinaryReader(ms);
-    //        return br;
-    //    }
-    //}
-
-
-
     private byte[] bytes = new byte[0];
-
     private int position = 0;
     public ByteBuffer(byte[] value)
     {
         source = value;
-
     }
     public ByteBuffer()
     {
-
 
     }
 

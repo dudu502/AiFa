@@ -19,5 +19,6 @@ function trigger(type,obj)
 end
 
 function exit()
+	print("exit playingwithgirl")
 	time=0
 end

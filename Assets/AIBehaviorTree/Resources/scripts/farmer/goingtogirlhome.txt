@@ -14,5 +14,5 @@ function trigger(type,obj)
 end
 
 function exit()
-
+	print("exit go girlhome")
 end
