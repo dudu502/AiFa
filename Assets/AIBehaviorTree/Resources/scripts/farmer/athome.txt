@@ -16,10 +16,10 @@ function update(dt)
 end
 
 function trigger(type,obj)
-	print("exit at home")
+
 end
 
 function exit()
-	print("exit athome")
+	print("exit at home")
 	athomesecs=0
 end

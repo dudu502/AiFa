@@ -117,7 +117,7 @@ namespace AIBehaviorTree
         [AIDoc("End Current Node")]
         public void Break()
         {       
-            Exit();
+            Exit(false);
             if (m_Parent != null)
             {
                 switch (m_Parent.Config.type)
@@ -205,18 +205,18 @@ namespace AIBehaviorTree
             m_BlActive = true;
         }
 
-        public virtual void Exit(bool exitAll = false)
+        public virtual void Exit(bool exitAll)
         {
+            //if (!Active) return;
             if(exitAll)
             {
                 foreach (AINode child in m_Children)
-                    child.Exit();
+                    child.Exit(true);
             }
-            
 
             if (m_ExitAction != null)
                 m_ExitAction();
-         
+            
             if (OnExitHandler != null)
                 OnExitHandler(exitAll);
             m_BlActive = false;

@@ -33,7 +33,7 @@ namespace AIBehaviorTree
         /// </summary>
         public float m_UpdateIntervalSecs = 0.1f;
 
-        public bool m_BlLoop = false;
+        public bool m_BlLoop = true;
         float m_UpdatePassedSecs = 0;
         AINode m_Root = null;
         List<AINode> m_ListExecutingNodes = new List<AINode>();

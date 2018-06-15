@@ -1,8 +1,14 @@
-﻿using System;
+﻿using Observer;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+public enum AITye
+{
+    Same,
+}
 
 [AIBehaviorTree.AIDoc("Farmer 范德萨发 ")]
 public class Farmer : MonoBehaviour
@@ -21,18 +27,27 @@ public class Farmer : MonoBehaviour
     RectTransform target;
     bool movestate = false;
 
+    Notifier notifier;
     private void Awake()
     {
         m_Rect = GetComponent<RectTransform>();
         m_AI.Init();
         m_AI.UserData = this;
+        notifier = new Notifier(this);
     }
     void Start ()
     {
         
     }
+
+    [Subscribe(AITye.Same)]
+    void OnNotifyHandler(Notification noter)
+    {
+
+    }
+    
     [AIBehaviorTree.AIDoc("test")]
-    public void Test(int asdf,float f,string ss)
+    void Test(int asdf,float f,string ss)
     {
         
     }
