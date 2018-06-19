@@ -33,13 +33,28 @@ public class Farmer : MonoBehaviour
         m_Rect = GetComponent<RectTransform>();
         m_AI.Init();
         m_AI.UserData = this;
-        notifier = new Notifier(this);
-    }
-    void Start ()
-    {
-        
+        //notifier = new Notifier(this);
     }
 
+    List<Notifier> list;
+    void Start ()
+    {
+        list = new List<Notifier>();
+        for (int i = 0; i < 10000; ++i)
+            list.Add(new Notifier(this));
+    }
+
+    [ContextMenu("close ")]
+    void close()
+    {
+        while(list.Count>0)
+        {
+            list[0].Destory();
+            list.RemoveAt(0);
+        }
+        list.Clear();
+        list = null;
+    }
     [Subscribe(AITye.Same)]
     void OnNotifyHandler(Notification noter)
     {

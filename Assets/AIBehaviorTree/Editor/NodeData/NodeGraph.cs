@@ -65,7 +65,7 @@ public class NodeGraph
         NodeRect.x = ClickPos.x;
         NodeRect.y = ClickPos.y;
         NodeRect.width = 240;
-        NodeRect.height = 280;
+        NodeRect.height = 240;
         return NodeRect;
     }
 

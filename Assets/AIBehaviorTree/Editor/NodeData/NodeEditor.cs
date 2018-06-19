@@ -139,8 +139,8 @@ public class NodeEditor : EditorWindow {
     void InitWindow(NodeGraph parent)
     {
         string title = parent.Parent == null ? "Root" : string.Format("No.{0}", parent.Parent.Nodes.IndexOf(parent));
-        GUI.color = NodeGraph.GetColorByType((int)parent.Type);      
-        parent.NodeRect = GUI.Window(parent.ID, parent.NodeRect, DrawNodeWindow, new GUIContent(title));
+        GUI.color = NodeGraph.GetColorByType((int)parent.Type);          
+        parent.NodeRect = GUILayout.Window(parent.ID,parent.NodeRect, DrawNodeWindow, new GUIContent(title),GUILayout.ExpandHeight(true));
         GUI.color = Color.black;
         for (int i = 0; i < parent.Nodes.Count; ++i)
         {
