@@ -47,7 +47,7 @@ public class NodeHelper : EditorWindow
         WindowScrollPos = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height),
         WindowScrollPos, new Rect(0, 0, 200, 5000));
 
-        selectIndex = EditorGUILayout.Popup("All", selectIndex, GetAllClassNames());
+        selectIndex = EditorGUILayout.Popup("Class Filter", selectIndex, GetAllClassNames());
         var data = Nodes[selectIndex];
         GUI.color = Color.gray;
         EditorGUILayout.BeginVertical("box");

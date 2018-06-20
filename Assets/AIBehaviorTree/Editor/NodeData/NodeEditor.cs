@@ -186,8 +186,8 @@ public class NodeEditor : EditorWindow {
         EditorGUILayout.BeginVertical("box");
 
         EditorGUILayout.BeginVertical("box");
-        node.FoldOut = EditorGUILayout.Foldout(node.FoldOut, "Name (Node Description)");
-        if(node.FoldOut)
+        node.FoldOutDes = EditorGUILayout.Foldout(node.FoldOutDes, "Name (Node Description)");
+        if(node.FoldOutDes)
             node.Name = EditorGUILayout.TextField("", node.Name);
         EditorGUILayout.EndVertical();
 
@@ -196,9 +196,12 @@ public class NodeEditor : EditorWindow {
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical("box");
-        node.ScriptName = EditorGUILayout.TextField("ScriptName", node.ScriptName);
-        
-        if(node.ScriptName != "")
+        node.FoldOutScriptName = EditorGUILayout.Foldout(node.FoldOutScriptName,"ScriptPath&Name");
+        if(node.FoldOutScriptName)
+            node.ScriptName = EditorGUILayout.TextField("", node.ScriptName);
+
+
+        if (node.ScriptName != "")
         {
             string fullPath = Application.dataPath + AI.SCRIPT_OUTPUTPATH + node.ScriptName + ".txt";
             if (!File.Exists(fullPath))

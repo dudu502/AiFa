@@ -25,7 +25,8 @@ public class NodeGraph
     public string OutPutPath = "";
     public TextAsset SubTreeAsset = null;
     public int ToolBarSelectIndex = 0;
-    public bool FoldOut = true;
+    public bool FoldOutDes = true;
+    public bool FoldOutScriptName = true;
     public NodeGraph()
     {       
         NodeRect = new Rect(0,0,60,50);

@@ -10,7 +10,7 @@ public enum AITye
     Same,
 }
 
-[AIBehaviorTree.AIDoc("Farmer 范德萨发 ")]
+[AIBehaviorTree.AIDoc("范德萨发 ")]
 public class Farmer : MonoBehaviour
 {
     public Text m_TxtCount;
