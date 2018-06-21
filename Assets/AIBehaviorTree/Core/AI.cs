@@ -46,7 +46,6 @@ namespace AIBehaviorTree
         public object UserData { get; set; }
         public void Init()
         {
-            //m_Root = AINodeConfigData.Create(JsonMapper.ToObject<JsonData>(m_JsonAiTree.text), this);
             m_Root = AINodeConfigData.Create(m_TextDataAiTree.bytes, this);
             m_Root.OnExitHandler = OnAiExitHandler;
         }

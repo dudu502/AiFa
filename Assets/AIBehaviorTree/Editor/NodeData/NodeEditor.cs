@@ -113,7 +113,7 @@ public class NodeEditor : EditorWindow {
                     {
                         menu.AddItem(new GUIContent("Move Up"), false, OnNodeMoveUpInParentHandler, rightClickNode);
                     }
-                    if(rightClickNode.Parent.HasNextChild(rightClickNode))
+                    if (rightClickNode.Parent.HasNextChild(rightClickNode))
                     {
                         menu.AddItem(new GUIContent("Move Down"), false, OnNodeMoveDownInParentHandler, rightClickNode);
                     }
@@ -173,8 +173,6 @@ public class NodeEditor : EditorWindow {
             Debug.Log("Not Bytes File");
             return;
         }
-
-
     }
 
 
@@ -261,7 +259,8 @@ public class NodeEditor : EditorWindow {
             EditorGUILayout.EndVertical();
         }
         EditorGUILayout.EndVertical();
-        GUI.DragWindow(new Rect(0, 0, 1000,20));      
+        GUI.DragWindow(new Rect(0, 0, 1000,20));   
+       
     }
 
 

@@ -21,7 +21,7 @@ public class NodeHelper : EditorWindow
 
     private void Init()
     {
-        Nodes =  AIBehaviorTree.AI.CreateHelpDataFromAssembly();
+        Nodes = AI.CreateHelpDataFromAssembly();
     }
 
     private void OnGUI()
