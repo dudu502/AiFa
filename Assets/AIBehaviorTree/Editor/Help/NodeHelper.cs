@@ -9,7 +9,7 @@ using System.Reflection.Emit;
 
 public class NodeHelper : EditorWindow
 {
-    [MenuItem("Window/NodeHelper")]
+    [MenuItem("Window/Node/NodeHelper")]
     static void ShowEditor()
     {
         NodeHelper editor = GetWindow<NodeHelper>();

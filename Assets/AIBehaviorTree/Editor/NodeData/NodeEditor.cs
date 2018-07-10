@@ -9,7 +9,7 @@ using AIBehaviorTree;
 
 public class NodeEditor : EditorWindow {
 
-    [MenuItem("Window/NodeEditor")]
+    [MenuItem("Window/Node/NodeEditor")]
     static void ShowEditor()
     {
         NodeEditor editor = GetWindow<NodeEditor>();
@@ -23,7 +23,8 @@ public class NodeEditor : EditorWindow {
         editor.Init();
         editor.SetSelectTextAsset(asset);
     }
-
+    private Vector2 m_BackGroundOffset;
+    private Vector2 m_BackGroundDrag;
 
     private TextAsset m_CurrentTextAsset = null;
     private Vector2 WindowScrollPos;
@@ -95,8 +96,43 @@ public class NodeEditor : EditorWindow {
     {
        return NodeGraph.FindByMousePos(m_RootNode,mpos);
     }
+    
+    /// <summary>
+    /// Draw BackGround Grid
+    /// </summary>
+    /// <param name="gridSpacing"></param>
+    /// <param name="gridOpacity"></param>
+    /// <param name="gridColor"></param>
+    private void DrawBackGroundGrid(float gridSpacing, float gridOpacity, Color gridColor)
+    {
+        int widthDivs = Mathf.CeilToInt(position.width / gridSpacing);
+        int heightDivs = Mathf.CeilToInt(position.height / gridSpacing);
+
+        Handles.BeginGUI();
+        Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
+
+        m_BackGroundOffset += m_BackGroundDrag * 0.5f;
+        Vector3 newOffset = new Vector3(m_BackGroundOffset.x % gridSpacing, m_BackGroundOffset.y % gridSpacing, 0);
+
+        for (int i = 0; i < widthDivs; i++)
+        {
+            Handles.DrawLine(new Vector3(gridSpacing * i, -gridSpacing, 0) + newOffset, new Vector3(gridSpacing * i, position.height, 0f) + newOffset);
+        }
+
+        for (int j = 0; j < heightDivs; j++)
+        {
+            Handles.DrawLine(new Vector3(-gridSpacing, gridSpacing * j, 0) + newOffset, new Vector3(position.width, gridSpacing * j, 0f) + newOffset);
+        }
+
+        Handles.color = Color.white;
+        Handles.EndGUI();
+    }
+
+
     void OnGUI()
     {
+        DrawBackGroundGrid(20, 0.2f, Color.gray);
+        DrawBackGroundGrid(100, 0.4f, Color.gray);
         #region EventHandler
         //right click event
         if (Event.current.type == EventType.ContextClick)
@@ -122,6 +158,7 @@ public class NodeEditor : EditorWindow {
             menu.ShowAsContext();
             Event.current.Use();
         }
+       
         
         #endregion
         WindowScrollPos = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height),
@@ -234,7 +271,7 @@ public class NodeEditor : EditorWindow {
             node.OutPutPath = EditorGUILayout.TextField("", node.OutPutPath);
             if (node.OutPutPath != "")
             {
-                if(!File.Exists(Application.dataPath + AI.TREE_OUTPUTPATH + node.OutPutPath + ".json"))
+                if(!File.Exists(Application.dataPath + AI.TREE_OUTPUTPATH + node.OutPutPath + ".bytes"))
                 {
                     if(GUILayout.Button("Export Tree"))
                         OnExportAllHandler(node);
@@ -259,8 +296,7 @@ public class NodeEditor : EditorWindow {
             EditorGUILayout.EndVertical();
         }
         EditorGUILayout.EndVertical();
-        GUI.DragWindow(new Rect(0, 0, 1000,20));   
-       
+        GUI.DragWindow(new Rect(0, 0, 1000,20));          
     }
 
 

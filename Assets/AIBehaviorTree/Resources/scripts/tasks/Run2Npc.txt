@@ -1,7 +1,6 @@
-
+﻿
 --[[
     基本信息：Name:Run2Npc Type:ACTION Weight:1
-    创建日期：6/14/2018 3:38:11 PM
 --]]
 
 --进入条件检测
@@ -12,7 +11,7 @@ end
 
 --进入调用
 function enter()
-
+	self.UserData:Run2Npc(self.UserData.Task.TargetNpc)
 end
 
 --每隔dt秒更新
@@ -22,7 +21,8 @@ end
 
 --事件监听
 function trigger(type,obj)
-
+	if type=="MoveFinish"
+		self:Break()
 end
 
 --退出调用
