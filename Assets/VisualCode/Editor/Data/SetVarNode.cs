@@ -4,9 +4,9 @@ using UnityEditor;
 
 namespace VisualCode
 {
-
     public class SetVarNode : VisualNode
     {
+        public SetVarNode() { }
         public SetVarNode(Vector2 pos) : base(pos)
         {
             SetRectSize(new Vector2(160, 40));
@@ -23,6 +23,7 @@ namespace VisualCode
         protected override void DrawWindowFunc(int id)
         {
             base.DrawWindowFunc(id);
+
             GUILayout.BeginVertical();
             foreach (var field in fields)
             {
@@ -35,11 +36,34 @@ namespace VisualCode
                 GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();
+
             GUI.DragWindow(new Rect(0, 0, 1000, 20));
+        }
+        protected override Color GetNodeColor()
+        {
+            return Color.green;
         }
         protected override string GetTitle()
         {
-            return "Set Var";
+            return "Set Variable";
+        }
+
+        public override NodeType GetNodeType()
+        {
+            return NodeType.SetVar;
+        }
+
+        public static byte[] Write(SetVarNode node)
+        {
+            ByteBuffer bfs = VisualNode.Write(node);
+            return bfs.Getbuffer();
+        }
+        public static SetVarNode Read(byte[] bytes)
+        {
+            SetVarNode node = new SetVarNode();
+            ByteBuffer bfs = new ByteBuffer(bytes);
+            VisualNode.Read(bfs, node);
+            return node;
         }
     }
 }

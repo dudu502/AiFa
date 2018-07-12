@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using VisualCode;
@@ -12,169 +13,198 @@ public class VisualGraphEditor : EditorWindow
     {
         VisualGraphEditor editor = GetWindow<VisualGraphEditor>();
         editor.Show();
+        editor.Init();
     }
-    public static Vector2 WindowScrollPos = Vector2.zero;
-    List<VisualNode> Nodes = new List<VisualNode>();
-
+    public static GUIStyle InputNodeStyle;
+    public static GUIStyle OutputNodeStyle;
+    private void Init()
+    {
+        InputNodeStyle = new GUIStyle();
+        InputNodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/lightskin/images/node0.png") as Texture2D;
     
+        OutputNodeStyle = new GUIStyle();
+        OutputNodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/lightskin/images/node5.png") as Texture2D;
+    }
 
+    VisualGraphData GraphData = new VisualGraphData();
+    private Vector2 WindowOffset;
+    private Vector2 WindowDrag;
+
+    public List<VisualNode> Nodes { get { return GraphData.Nodes; } }
     private void OnGUI()
     {
-        DrawMenuBar();
+        DrawGrid(20, 0.2f, Color.gray);
+        DrawGrid(100, 0.4f, Color.gray);
         ProcessEvent(Event.current);
-        WindowScrollPos = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height),
-        WindowScrollPos, new Rect(0, 0, 10000, 10000));             
         InitWindow();
-        GUI.EndScrollView();
+        DrawMenuBar();
     }
     private void DrawMenuBar()
     {
         GUILayout.BeginArea(new Rect(0, 0, position.width, 20f), EditorStyles.toolbar);
         GUILayout.BeginHorizontal();
         GUILayout.Space(5);
-        GUILayout.Button(new GUIContent("Save"), EditorStyles.toolbarButton, GUILayout.Width(35));
+        if (GUILayout.Button(new GUIContent("Save"), EditorStyles.toolbarButton, GUILayout.Width(35)))
+        {
+            SaveNodes();
+        }
+        if (GUILayout.Button(new GUIContent("⊙"), EditorStyles.toolbarButton, GUILayout.Width(20)))
+        {
+            Nodes.ForEach((n) =>n.rect.position-= WindowOffset);
+            WindowOffset -= WindowOffset;
+        }
         GUILayout.EndHorizontal();
         GUILayout.EndArea();
     }
-    private void Update()
+
+    private void SaveNodes()
     {
-        
+        string path = Application.dataPath + "/VisualCode/Out/" + "nodes.bytes";
+        File.WriteAllBytes(path, VisualGraphData.Write(GraphData));
+        AssetDatabase.Refresh();
+    }
+    void OnSelectionChange()
+    {
+        if (Selection.objects.Length > 0)
+        {
+            SetSelectTextAsset(Selection.objects[0] as TextAsset);
+        }
+    }
+
+    private void SetSelectTextAsset(TextAsset textAsset)
+    {
+        byte[] bytes = textAsset.bytes;
+        if(bytes != null && bytes.Length>0)
+        {
+            GraphData = VisualGraphData.Read(bytes);
+            GraphData.CalcConnectionInfos();
+            Debug.Log(GraphData);
+            WindowOffset = Vector2.zero;
+        }
+    }
+    VisualNode OnFocusOnNode(Vector2 pos)
+    {
+        foreach(var n in Nodes)
+        {
+            if (n.ContainPos(pos))
+                return n;
+        }
+        return null;
     }
     private void ProcessEvent(Event current)
     {
-        foreach (var nod in Nodes)
-            nod.ProcessEvent(current);
+        WindowDrag = Vector2.zero;
+        Vector2 vectorPos = current.mousePosition;
         if (current.type == EventType.MouseDown)
         {
             if (current.button == 1)//right mouse
             {
                 var menu = new GenericMenu();
-                menu.AddItem(new GUIContent("Create Var"), false, OnCreateNewVarNodeHandler, current.mousePosition + WindowScrollPos);
-                menu.AddItem(new GUIContent("Get Var"), false, OnGetVarNodeHandler, current.mousePosition + WindowScrollPos);
-
-                menu.ShowAsContext();
-                Event.current.Use();
+                var n = OnFocusOnNode(vectorPos);
+                if (n != null)
+                {
+                    menu.AddItem(new GUIContent("Delete"), false, OnDeleteNodeHandler, n);
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }                                    
+                else
+                {
+                    menu.AddItem(new GUIContent("Variable/Set"), false, OnCreateNewVarNodeHandler, vectorPos);
+                    menu.AddItem(new GUIContent("Variable/Get"), false, OnCreateGetVarNodeHandler, vectorPos);
+                    menu.AddItem(new GUIContent("Function/[0]"), false, OnCreateFunctionNodeHandler, new object[] { 0, vectorPos });
+                    menu.AddItem(new GUIContent("Function/[1]"), false, OnCreateFunctionNodeHandler, new object[] { 1, vectorPos });
+                    menu.AddItem(new GUIContent("Function/[2]"), false, OnCreateFunctionNodeHandler, new object[] { 2, vectorPos });
+                    menu.AddItem(new GUIContent("Function/[3]"), false, OnCreateFunctionNodeHandler, new object[] { 3, vectorPos });
+                    menu.AddItem(new GUIContent("Function/[4]"), false, OnCreateFunctionNodeHandler, new object[] { 4, vectorPos });
+                    menu.AddItem(new GUIContent("Calculation/Add"), false, OnCreateAddHandler, vectorPos);
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
             }
             else//left mouse
             {
-                Nodes.ForEach((nod) => nod.OnMouseDownInOutRect(current.mousePosition + WindowScrollPos));
+                Nodes.ForEach((nod) => nod.UpdateAccessRectReadyState(vectorPos));
             }
+        }
+        else if(current.type == EventType.MouseDrag)
+        {
+            if (current.button == 2)
+            {
+                var n = OnFocusOnNode(vectorPos);
+                if(n == null)
+                {
+                    WindowDrag = current.delta;
+                    Nodes.ForEach((item) => {
+                        item.rect.position += current.delta;
+                    });
+                    Repaint();
+                }
+            }
+           
+
         }
         else if (current.type == EventType.MouseUp)
         {
-            var outField = GetReadyOutStateField();
-            if (outField != null)
+            AccessNode.AccessRect rect = null;
+            Nodes.ForEach((node)=> 
             {
-                foreach(var nod in Nodes)
+                var rst = node.FindReadyStateAccessRect();
+                if (rst != null)
+                    rect = rst;
+            });
+            if (rect != null)
+            {
+                foreach(var node in Nodes)
                 {
-                    var rst = nod.GetAngInStateContainPos(current.mousePosition + WindowScrollPos);
-                    if(rst != null&&outField.Target!=rst.Target)
-                    {
-                        outField.OutRect.State = rst.InRect.State = 2;
-                        outField.AddNext(rst);
+                    var mouseUpRect = node.GetMouseUpAccessRect(vectorPos);
+                    if (mouseUpRect != null && mouseUpRect.Target.Target != rect.Target.Target)
+                    {                       
+                        if (rect.Type == AccessNode.AccessRect.RectType.FieldOut
+                            && mouseUpRect.Type == AccessNode.AccessRect.RectType.FieldIn ||
+                            rect.Type == AccessNode.AccessRect.RectType.FlowOut
+                            && mouseUpRect.Type == AccessNode.AccessRect.RectType.FlowIn)
+                        {
+                            rect.Target.AddNext(mouseUpRect.Target);
+                        }                           
+                        else if (rect.Type == AccessNode.AccessRect.RectType.FieldIn
+                            && mouseUpRect.Type == AccessNode.AccessRect.RectType.FieldOut ||
+                            rect.Type == AccessNode.AccessRect.RectType.FlowIn
+                            && mouseUpRect.Type == AccessNode.AccessRect.RectType.FlowOut)
+                        {
+                            rect.Target.AddPrev(mouseUpRect.Target);
+                        }                                            
                         break;
                     }
                 }
-            }
-
-            var inField = GetReadyInStateField();
-            if (inField != null)
-            {
-                foreach (var nod in Nodes)
-                {
-                    var rst = nod.GetAngOutStateContainPos(current.mousePosition + WindowScrollPos);
-                    if (rst != null&&inField.Target!=rst.Target)
-                    {
-                        inField.InRect.State = rst.OutRect.State = 2;
-                        inField.AddPrev(rst);
-                        break;
-                    }
-                }
-            }
-
-            var flowOut = GetReadyOutStateFlow();
-            if (flowOut != null)
-            {
-                foreach(var nod in Nodes)
-                {
-                    var rst = nod.GetFlowAngInStateContainPos(current.mousePosition + WindowScrollPos);
-                    if(rst != null && flowOut.Target != rst.Target)
-                    {
-                        flowOut.OutRect.State = rst.InRect.State = 2;
-                        flowOut.AddNext(rst);
-                    }
-                }
-            }
-
-            var flowIn = GetReadyInStateFlow();
-            if(flowIn!=null)
-            {
-                foreach(var nod in Nodes)
-                {
-                    var rst = nod.GetFlowAngOutStateContainPos(current.mousePosition + WindowScrollPos);
-                    if(rst != null && flowIn.Target != rst.Target)
-                    {
-                        flowIn.InRect.State = rst.OutRect.State = 2;
-                        flowIn.AddPrev(rst);
-                    }
-                }
-            }
-
+            }            
             Nodes.ForEach((nod) => nod.ResetAllReadyState2Zero());
         }
     }
 
-    FieldNode GetReadyOutStateField()
-    {
-        foreach(var node in Nodes)
-        {
-            foreach(var field in node.fields)
-            {
-                if (field.OutRect.State == 1)
-                    return field;
-            }
-        }
-        return null;
-    }
-    
-    FieldNode GetReadyInStateField()
-    {
-        foreach (var node in Nodes)
-        {
-            foreach (var field in node.fields)
-            {
-                if (field.InRect.State == 1)
-                    return field;
-            }
-        }
-        return null;
-    }
-    FlowNode GetReadyInStateFlow()
-    {
-        foreach(var node in Nodes)
-        {
-            if (node.currentFlow.InRect.State == 1)
-                return node.currentFlow;
-        }
-        return null;
-    }
-
-    FlowNode GetReadyOutStateFlow()
-    {
-        foreach (var node in Nodes)
-        {
-            if (node.currentFlow.OutRect.State == 1)
-                return node.currentFlow;
-        }
-        return null;
-    }
-    void OnGetVarNodeHandler(object pos)
+    void OnCreateGetVarNodeHandler(object pos)
     {
         Nodes.Add(new GetVarNode((Vector2)pos));
     }
     void OnCreateNewVarNodeHandler(object pos)
     {
         Nodes.Add(new SetVarNode((Vector2)pos));
+    }
+    void OnCreateFunctionNodeHandler(object obj)
+    {
+        int count = (int)((object[])obj)[0]; ;
+        Vector2 pos =(Vector2)((object[])obj)[1];
+        Nodes.Add(new FuncNode(count,pos));
+    }
+
+    void OnDeleteNodeHandler(object obj)
+    {
+        VisualNode node = obj as VisualNode;
+        Nodes.Remove(node);
+        node.Remove();
+    }
+    void OnCreateAddHandler(object obj)
+    {
+        Nodes.Add(new AddOpNode((Vector2)obj));
     }
     void InitWindow()
     {
@@ -183,5 +213,27 @@ public class VisualGraphEditor : EditorWindow
         BeginWindows();
         Nodes.ForEach((node) => node.DrawWindow());
         EndWindows();
+    }
+
+
+    private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
+    {
+        int widthDivs = Mathf.CeilToInt(position.width / gridSpacing);
+        int heightDivs = Mathf.CeilToInt(position.height / gridSpacing);
+
+        Handles.BeginGUI();
+        Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
+
+        WindowOffset += WindowDrag * 0.5f;
+        Vector3 newOffset = new Vector3(WindowOffset.x % gridSpacing, WindowOffset.y % gridSpacing, 0);
+
+        for (int i = 0; i < widthDivs; i++)
+            Handles.DrawLine(new Vector3(gridSpacing * i, -gridSpacing, 0) + newOffset, new Vector3(gridSpacing * i, position.height, 0f) + newOffset);
+
+        for (int j = 0; j < heightDivs; j++)
+            Handles.DrawLine(new Vector3(-gridSpacing, gridSpacing * j, 0) + newOffset, new Vector3(position.width, gridSpacing * j, 0f) + newOffset);
+
+        Handles.color = Color.white;
+        Handles.EndGUI();
     }
 }

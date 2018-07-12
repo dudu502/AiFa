@@ -4,70 +4,70 @@ using UnityEditor;
 
 namespace VisualCode
 {
-    public class FuncNode : VisualNode
+
+    public class AddOpNode : VisualNode
     {
-        public FuncNode() { }
-        public FuncNode(int count,Vector2 pos) : base(pos)
+        public AddOpNode() { }
+
+        public AddOpNode(Vector2 pos):base(pos)
         {
-            SetRectSize(new Vector2(120, 40));
-            for (int i = 0; i < count; ++i)
+            SetRectSize(new Vector2(80, 40));
+            for (int i = 0; i < 2; ++i)
             {
                 var field = new FieldNode(i, this);
                 field.OutRect.Enable = false;
                 fields.Add(field);
             }
-            resultField = new FieldNode(count, this);
+            resultField = new FieldNode(2, this);
             resultField.InRect.Enable = false;
-            resultField.OutRect.Enable = false;
             currentFlow = new FlowNode(this);
         }
 
+        protected override string GetTitle()
+        {
+            return "Add";
+        }
         protected override void DrawWindowFunc(int id)
-        {          
+        {
             base.DrawWindowFunc(id);
             GUILayout.BeginVertical();
-            foreach (var field in fields)
+            for(int i=0;i<fields.Count;++i)
             {
                 GUILayout.BeginHorizontal();
-                field.Type = EditorGUILayout.Popup(field.Type, FieldNode.S_FIELDS);
-                field.Name = EditorGUILayout.TextField(field.Name);
+                var field = fields[i];
+                field.Type = EditorGUILayout.Popup(i==0?"Left":"Right",field.Type, FieldNode.S_FIELDS);
                 GUILayout.EndHorizontal();
             }
 
             GUILayout.BeginHorizontal();
-            resultField.OutRect.Enable = EditorGUILayout.BeginToggleGroup("Return",resultField.OutRect.Enable);
+            resultField.OutRect.Enable = EditorGUILayout.BeginToggleGroup("Return", true);
             resultField.Type = EditorGUILayout.Popup(resultField.Type, FieldNode.S_FIELDS);
             EditorGUILayout.EndToggleGroup();
             GUILayout.EndHorizontal();
-
             GUILayout.EndVertical();
             GUI.DragWindow(new Rect(0, 0, 1000, 20));
         }
-        protected override string GetTitle()
-        {
-            return "Func";
-        }
         protected override Color GetNodeColor()
         {
-            return Color.yellow;
+            return new Color(0.5f,1,0.7f,1) ;
         }
         public override NodeType GetNodeType()
         {
-            return NodeType.Func;
+            return NodeType.AddOp;
         }
 
-        public static byte[] Write(FuncNode node)
+        public static byte[] Write(AddOpNode node)
         {
-            ByteBuffer bfs = VisualNode.Write(node);           
+            ByteBuffer bfs = VisualNode.Write(node);
             bfs.WriteBytes(FieldNode.Write(node.resultField));
             return bfs.Getbuffer();
         }
 
-        public static FuncNode Read(byte[] bytes)
+        public static AddOpNode Read(byte[] bytes)
         {
-            FuncNode node = new FuncNode();
+            AddOpNode node = new AddOpNode();
             ByteBuffer bfs = new ByteBuffer(bytes);
-            VisualNode.Read(bfs, node);          
+            VisualNode.Read(bfs, node);
             node.resultField = FieldNode.Read(bfs.ReadBytes());
             node.resultField.Target = node;
             return node;

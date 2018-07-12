@@ -33,5 +33,13 @@ namespace VisualCode
                 source.GetNext().SetPrev(source.GetPrev());
             source = null;
         }
+        public static void CutOff(this ILinkNode source)
+        {
+            if (source.GetPrev() != null)
+                source.GetPrev().SetNext(null);
+            if (source.GetNext() != null)
+                source.GetNext().SetPrev(null);
+            source = null;
+        }
     }
 }

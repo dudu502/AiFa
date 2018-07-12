@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.IO;
-using System;
+﻿using System;
 using System.Text;
 
 public class ByteBuffer
