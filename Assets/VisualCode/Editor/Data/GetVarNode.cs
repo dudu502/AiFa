@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using System.Collections.Generic;
 
 namespace VisualCode
 {
@@ -20,6 +21,7 @@ namespace VisualCode
             {
                 var field = new FieldNode(i, this);
                 field.InRect.Enable = false;
+                field.Name = " ";
                 fields.Add(field);
             }
             currentFlow = new FlowNode(this);
@@ -33,7 +35,20 @@ namespace VisualCode
                 GUILayout.BeginHorizontal();
                 field.Domain = (AccessNode.DomainMode)EditorGUILayout.EnumPopup(field.Domain);
                 field.Type = EditorGUILayout.Popup(field.Type, FieldNode.S_FIELDS);
-                field.Value = EditorGUILayout.TextField(field.Value);
+                List<FieldNode> targets= OnFieldGetInfo(field, AccessNode.AccessGetInfoMode.GetVar);
+                if (targets.Count > 0)
+                {
+                    List<string> names = new List<string>() { " " };
+                    targets.ForEach((tf)=> { names.Add(tf.Name); });
+                    if (names.IndexOf(field.Name) > -1)
+                        field.Name = names[EditorGUILayout.Popup(names.IndexOf(field.Name), names.ToArray())];                 
+                    else
+                        field.Name = names[EditorGUILayout.Popup(0, names.ToArray())];
+                    
+                }
+                
+                field.Value = EditorGUILayout.TextField(field.Value);               
+                
                 GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();

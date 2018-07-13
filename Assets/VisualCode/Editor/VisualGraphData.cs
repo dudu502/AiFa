@@ -6,6 +6,44 @@ namespace VisualCode
     public class VisualGraphData 
     {
         public List<VisualNode> Nodes = new List<VisualNode>();
+        public void AddNode(VisualNode node)
+        {
+            Nodes.Add(node);
+            node.OnAccessNodeModify = OnAccessNodeModifyHandler;
+            node.OnFieldGetInfo = OnGetAccessNodeInfoHandler;
+        }
+
+        void OnAccessNodeModifyHandler(AccessNode sourceNode, AccessNode.AccessModifyMode mode)
+        {
+            switch (mode)
+            {
+                case AccessNode.AccessModifyMode.SetVar:
+
+                    break;
+            }
+        }
+        List<FieldNode> OnGetAccessNodeInfoHandler(FieldNode sourceNode,AccessNode.AccessGetInfoMode mode)
+        {
+            var list = new List<FieldNode>();
+            foreach(var nod in Nodes)
+            {
+                if (nod == sourceNode.Target) continue;
+                if (nod.GetNodeType() == VisualNode.NodeType.SetVar)
+                {
+                    foreach(var field in nod.fields)
+                    {
+                        if (field.Type == sourceNode.Type && field.Domain == sourceNode.Domain)
+                        {
+                            list.Add(field);
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+
+
         public static byte[] Write(VisualGraphData data)
         {
             ByteBuffer bfs = new ByteBuffer();
@@ -22,6 +60,14 @@ namespace VisualCode
                     bfs.WriteBytes(FuncNode.Write(d as FuncNode));
                 else if (d.GetNodeType() == VisualNode.NodeType.AddOp)
                     bfs.WriteBytes(AddOpNode.Write(d as AddOpNode));
+                else if (d.GetNodeType() == VisualNode.NodeType.MinusOp)
+                    bfs.WriteBytes(MinusOpNode.Write(d as MinusOpNode));
+                else if (d.GetNodeType() == VisualNode.NodeType.MultiplyOp)
+                    bfs.WriteBytes(MultiplyOpNode.Write(d as MultiplyOpNode));
+                else if (d.GetNodeType() == VisualNode.NodeType.DivisionOp)
+                    bfs.WriteBytes(DivisionOpNode.Write(d as DivisionOpNode));
+                else if (d.GetNodeType() == VisualNode.NodeType.Proc)
+                    bfs.WriteBytes(ProcNode.Write(d as ProcNode));
             }
             return bfs.Getbuffer();
         }
@@ -34,13 +80,21 @@ namespace VisualCode
             {
                 VisualNode.NodeType type = (VisualNode.NodeType)bfs.ReadShort();
                 if (type == VisualNode.NodeType.SetVar)
-                    data.Nodes.Add(SetVarNode.Read(bfs.ReadBytes()));
+                    data.AddNode(SetVarNode.Read(bfs.ReadBytes()));
                 else if (type == VisualNode.NodeType.GetVar)
-                    data.Nodes.Add(GetVarNode.Read(bfs.ReadBytes()));
+                    data.AddNode(GetVarNode.Read(bfs.ReadBytes()));
                 else if (type == VisualNode.NodeType.Func)
-                    data.Nodes.Add(FuncNode.Read(bfs.ReadBytes()));
+                    data.AddNode(FuncNode.Read(bfs.ReadBytes()));
                 else if (type == VisualNode.NodeType.AddOp)
-                    data.Nodes.Add(AddOpNode.Read(bfs.ReadBytes()));
+                    data.AddNode(AddOpNode.Read(bfs.ReadBytes(), new AddOpNode()));
+                else if (type == VisualNode.NodeType.MinusOp)
+                    data.AddNode(MinusOpNode.Read(bfs.ReadBytes(), new MinusOpNode()));
+                else if (type == VisualNode.NodeType.MultiplyOp)
+                    data.AddNode(MultiplyOpNode.Read(bfs.ReadBytes(), new MultiplyOpNode()));
+                else if (type == VisualNode.NodeType.DivisionOp)
+                    data.AddNode(DivisionOpNode.Read(bfs.ReadBytes(), new DivisionOpNode()));
+                else if (type == VisualNode.NodeType.Proc)
+                    data.AddNode(ProcNode.Read(bfs.ReadBytes()));
             }
             return data;
         }

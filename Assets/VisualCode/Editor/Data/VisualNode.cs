@@ -16,9 +16,14 @@ namespace VisualCode
             GetVar = 2,
             Func = 3,
             AddOp = 4,
-            
+            MinusOp = 5,
+            MultiplyOp = 6,
+            DivisionOp = 7,
+            Proc = 8,
         }
-
+        
+        public Action<AccessNode,AccessNode.AccessModifyMode> OnAccessNodeModify;
+        public Func<FieldNode, AccessNode.AccessGetInfoMode,List< FieldNode>> OnFieldGetInfo;
         public Rect rect = new Rect();
         public List<FieldNode> fields = new List<FieldNode>();
         public FlowNode currentFlow = null;
@@ -60,7 +65,9 @@ namespace VisualCode
         }
         public void DrawWindow()
         {
-            GUI.color = GetNodeColor();
+            var c = GetNodeColor();
+            if (FindLinkStateAccessRect() == null) c.a *= 0.5f;
+            GUI.color = c;
             rect = GUILayout.Window(GetHashCode(),rect,DrawWindowFunc, GetTitle(), GUILayout.ExpandWidth(true),GUILayout.ExpandHeight(true));
             GUI.color = Color.white;
         }
@@ -88,6 +95,25 @@ namespace VisualCode
                 resultField.ResetReadyState2Zero();
         }
 
+        public AccessNode.AccessRect FindLinkStateAccessRect()
+        {
+            foreach(var field in fields)
+            {
+                if (field.OutRect.Enable&&field.OutRect.State == 2)
+                    return field.OutRect;
+                if (field.InRect.Enable&&field.InRect.State == 2)
+                    return field.InRect;
+            }
+            if (currentFlow.OutRect.Enable&&currentFlow.OutRect.State ==2 )
+                return currentFlow.OutRect;
+            if (currentFlow.InRect.Enable && currentFlow.InRect.State == 2)
+                return currentFlow.InRect;
+            if (resultField != null && resultField.OutRect.Enable&&resultField.OutRect.State == 2)
+                return resultField.OutRect;
+            if (resultField != null && resultField.InRect.Enable && resultField.InRect.State == 2)
+                return resultField.InRect;
+            return null;
+        }
         public AccessNode.AccessRect FindReadyStateAccessRect()
         {
             foreach (var field in fields)
@@ -108,7 +134,9 @@ namespace VisualCode
         
         protected virtual void DrawWindowFunc(int id)
         {
-            GUI.color = GetNodeColor();
+            var c = GetNodeColor();
+            if (FindLinkStateAccessRect() == null) c.a *= 0.5f;
+            GUI.color = c;            
         }
 
         public void DrawConn(Vector2 vector2)
@@ -135,6 +163,8 @@ namespace VisualCode
                 currentFlow.InRect.State = 1;
             if (resultField != null && resultField.OutRect.Contains(pos) && resultField.OutRect.State == 0)
                 resultField.OutRect.State = 1;
+            else if (resultField != null && resultField.InRect.Contains(pos) && resultField.InRect.State == 0)
+                resultField.InRect.State = 1;
         }     
         public AccessNode.AccessRect GetMouseUpAccessRect(Vector2 pos)
         {
@@ -151,6 +181,8 @@ namespace VisualCode
                 return currentFlow.InRect;
             if (resultField != null && resultField.OutRect.Contains(pos) && resultField.OutRect.State == 0)
                 return resultField.OutRect;
+            if (resultField != null && resultField.InRect.Contains(pos) && resultField.InRect.State == 0)
+                return resultField.InRect;
             return null;
         }       
 
@@ -196,6 +228,16 @@ namespace VisualCode
     }
     public class AccessNode : ILinkNode
     {
+        public enum AccessModifyMode
+        {
+            SetVar,
+        }
+        public enum AccessGetInfoMode
+        {
+            GetVar,
+        }
+
+
         public enum AccessMode
         {
             Private,
@@ -457,6 +499,7 @@ namespace VisualCode
             "short",
             "float",
             "string",
+            "bool",
         };
         
         public int Type = 0;

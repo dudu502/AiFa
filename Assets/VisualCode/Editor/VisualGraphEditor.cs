@@ -117,6 +117,14 @@ public class VisualGraphEditor : EditorWindow
                     menu.AddItem(new GUIContent("Function/[3]"), false, OnCreateFunctionNodeHandler, new object[] { 3, vectorPos });
                     menu.AddItem(new GUIContent("Function/[4]"), false, OnCreateFunctionNodeHandler, new object[] { 4, vectorPos });
                     menu.AddItem(new GUIContent("Calculation/Add"), false, OnCreateAddHandler, vectorPos);
+                    menu.AddItem(new GUIContent("Calculation/Minus"), false, OnCreateMinusHandler, vectorPos);
+                    menu.AddItem(new GUIContent("Calculation/Multiply"), false, OnCreateMultiplyHandler, vectorPos);
+                    menu.AddItem(new GUIContent("Calculation/Division"), false, OnCreateDivisionHandler, vectorPos);
+                    menu.AddItem(new GUIContent("Process/[0]"), false, OnCreateProcessNodeHandler, new object[] { 0, vectorPos });
+                    menu.AddItem(new GUIContent("Process/[1]"), false, OnCreateProcessNodeHandler, new object[] { 1, vectorPos });
+                    menu.AddItem(new GUIContent("Process/[2]"), false, OnCreateProcessNodeHandler, new object[] { 2, vectorPos });
+                    menu.AddItem(new GUIContent("Process/[3]"), false, OnCreateProcessNodeHandler, new object[] { 3, vectorPos });
+                    menu.AddItem(new GUIContent("Process/[4]"), false, OnCreateProcessNodeHandler, new object[] { 4, vectorPos });
                     menu.ShowAsContext();
                     Event.current.Use();
                 }
@@ -183,19 +191,24 @@ public class VisualGraphEditor : EditorWindow
 
     void OnCreateGetVarNodeHandler(object pos)
     {
-        Nodes.Add(new GetVarNode((Vector2)pos));
+        GraphData.AddNode(new GetVarNode((Vector2)pos));
     }
     void OnCreateNewVarNodeHandler(object pos)
     {
-        Nodes.Add(new SetVarNode((Vector2)pos));
+        GraphData.AddNode(new SetVarNode((Vector2)pos));
     }
     void OnCreateFunctionNodeHandler(object obj)
     {
         int count = (int)((object[])obj)[0]; ;
         Vector2 pos =(Vector2)((object[])obj)[1];
-        Nodes.Add(new FuncNode(count,pos));
+        GraphData.AddNode(new FuncNode(count,pos));
     }
-
+    void OnCreateProcessNodeHandler(object obj)
+    {
+        int count = (int)((object[])obj)[0]; ;
+        Vector2 pos = (Vector2)((object[])obj)[1];
+        GraphData.AddNode(new ProcNode(count, pos));
+    }
     void OnDeleteNodeHandler(object obj)
     {
         VisualNode node = obj as VisualNode;
@@ -204,7 +217,19 @@ public class VisualGraphEditor : EditorWindow
     }
     void OnCreateAddHandler(object obj)
     {
-        Nodes.Add(new AddOpNode((Vector2)obj));
+        GraphData.AddNode(new AddOpNode((Vector2)obj));
+    }
+    void OnCreateMinusHandler(object obj)
+    {
+        GraphData.AddNode(new MinusOpNode((Vector2)obj));
+    }
+    void OnCreateMultiplyHandler(object obj)
+    {
+        GraphData.AddNode(new MultiplyOpNode((Vector2)obj));
+    }
+    void OnCreateDivisionHandler(object obj)
+    {
+        GraphData.AddNode(new DivisionOpNode((Vector2)obj));
     }
     void InitWindow()
     {
@@ -213,6 +238,7 @@ public class VisualGraphEditor : EditorWindow
         BeginWindows();
         Nodes.ForEach((node) => node.DrawWindow());
         EndWindows();
+        Repaint();
     }
 
 
