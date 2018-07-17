@@ -7,19 +7,24 @@ namespace VisualCode
     public class FuncNode : VisualNode
     {
         public FuncNode() { }
-        public FuncNode(int count,Vector2 pos) : base(pos)
+        public FuncNode(Vector2 pos) : base(pos)
         {
             SetRectSize(new Vector2(120, 40));
-            for (int i = 0; i < count; ++i)
-            {
-                var field = new FieldNode(i, this);
-                field.OutRect.Enable = false;
-                fields.Add(field);
-            }
-            resultField = new FieldNode(count, this);
+            Title = "func";
+           
+            resultField = new FieldNode(0, this);
             resultField.InRect.Enable = false;
             resultField.OutRect.Enable = false;
             currentFlow = new FlowNode(this);
+        }
+
+        public void AddParam(bool input,bool output)
+        {
+            var field = new FieldNode(fields.Count, this);
+            field.OutRect.Enable = output;
+            field.InRect.Enable = input;
+            fields.Add(field);
+            resultField.Index = fields.Count;
         }
 
         protected override void DrawWindowFunc(int id)
@@ -43,10 +48,8 @@ namespace VisualCode
             GUILayout.EndVertical();
             GUI.DragWindow(new Rect(0, 0, 1000, 20));
         }
-        protected override string GetTitle()
-        {
-            return "Func";
-        }
+
+
         protected override Color GetNodeColor()
         {
             return Color.yellow;

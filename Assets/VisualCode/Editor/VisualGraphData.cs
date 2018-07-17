@@ -13,6 +13,11 @@ namespace VisualCode
             node.OnFieldGetInfo = OnGetAccessNodeInfoHandler;
         }
 
+
+        public void Clear()
+        {
+            Nodes.Clear();
+        }
         void OnAccessNodeModifyHandler(AccessNode sourceNode, AccessNode.AccessModifyMode mode)
         {
             switch (mode)
@@ -99,7 +104,7 @@ namespace VisualCode
             return data;
         }
 
-        public void CalcConnectionInfos()
+        public void Link()
         {
             foreach (var nod in Nodes)
             {

@@ -21,7 +21,7 @@ namespace VisualCode
             DivisionOp = 7,
             Proc = 8,
         }
-        
+        public string Title = "";
         public Action<AccessNode,AccessNode.AccessModifyMode> OnAccessNodeModify;
         public Func<FieldNode, AccessNode.AccessGetInfoMode,List< FieldNode>> OnFieldGetInfo;
         public Rect rect = new Rect();
@@ -68,17 +68,15 @@ namespace VisualCode
             var c = GetNodeColor();
             if (FindLinkStateAccessRect() == null) c.a *= 0.5f;
             GUI.color = c;
-            rect = GUILayout.Window(GetHashCode(),rect,DrawWindowFunc, GetTitle(), GUILayout.ExpandWidth(true),GUILayout.ExpandHeight(true));
+            rect = GUILayout.Window(GetHashCode(),rect,DrawWindowFunc, Title, GUILayout.ExpandHeight(true),GUILayout.ExpandWidth(true));
             GUI.color = Color.white;
         }
         protected virtual Color GetNodeColor()
         {
             return Color.white;
         }
-        protected virtual string GetTitle()
-        {
-            return "";
-        }
+
+
         public virtual NodeType GetNodeType()
         {
             return NodeType.None;
@@ -197,6 +195,7 @@ namespace VisualCode
         public static ByteBuffer Write(VisualNode node)
         {
             ByteBuffer bfs = new ByteBuffer();
+            bfs.WriteString(node.Title);
             bfs.WriteFloat(node.rect.x);
             bfs.WriteFloat(node.rect.y);
             bfs.WriteFloat(node.rect.width);
@@ -211,6 +210,7 @@ namespace VisualCode
         }
         public static void Read(ByteBuffer bfs, VisualNode node)
         {
+            node.Title = bfs.ReadString();
             node.rect.x = bfs.ReadFloat();
             node.rect.y = bfs.ReadFloat();
             node.rect.width = bfs.ReadFloat();

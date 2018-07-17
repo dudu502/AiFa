@@ -8,10 +8,8 @@ namespace VisualCode
     {
         public AddOpNode() { }
         public AddOpNode(Vector2 pos) : base(pos) { }
-        protected override string GetTitle()
-        {
-            return "Add";
-        }
+
+
         public override NodeType GetNodeType()
         {
             return NodeType.AddOp;
@@ -25,10 +23,8 @@ namespace VisualCode
     {
         public MinusOpNode() { }
         public MinusOpNode(Vector2 pos) : base(pos) { }
-        protected override string GetTitle()
-        {
-            return "Minus";
-        }
+
+
         public override NodeType GetNodeType()
         {
             return NodeType.MinusOp;
@@ -43,10 +39,8 @@ namespace VisualCode
     {
         public MultiplyOpNode() { }
         public MultiplyOpNode(Vector2 pos) : base(pos) { }
-        protected override string GetTitle()
-        {
-            return "Multiply";
-        }
+   
+
         public override NodeType GetNodeType()
         {
             return NodeType.MultiplyOp;
@@ -70,10 +64,7 @@ namespace VisualCode
         {
             return NodeType.DivisionOp;
         }
-        protected override string GetTitle()
-        {
-            return "Division";
-        }
+      
     }
 
 
@@ -84,6 +75,7 @@ namespace VisualCode
         public OpNode(Vector2 pos):base(pos)
         {
             SetRectSize(new Vector2(80, 40));
+            
             for (int i = 0; i < 2; ++i)
             {
                 var field = new FieldNode(i, this);
@@ -95,10 +87,8 @@ namespace VisualCode
             currentFlow = new FlowNode(this);
         }
 
-        protected override string GetTitle()
-        {
-            return "Add";
-        }
+
+
         protected override void DrawWindowFunc(int id)
         {
             base.DrawWindowFunc(id);

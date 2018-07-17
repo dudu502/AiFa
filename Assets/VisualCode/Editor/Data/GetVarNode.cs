@@ -16,7 +16,7 @@ namespace VisualCode
         public GetVarNode(Vector2 pos) : base(pos)
         {
             SetRectSize(new Vector2(80, 40));
-
+            Title = "Get";
             for (int i = 0; i < 1; ++i)
             {
                 var field = new FieldNode(i, this);
@@ -41,10 +41,10 @@ namespace VisualCode
                     List<string> names = new List<string>() { " " };
                     targets.ForEach((tf)=> { names.Add(tf.Name); });
                     if (names.IndexOf(field.Name) > -1)
-                        field.Name = names[EditorGUILayout.Popup(names.IndexOf(field.Name), names.ToArray())];                 
+                        field.Name = names[EditorGUILayout.Popup(names.IndexOf(field.Name), names.ToArray())];                                                  
                     else
                         field.Name = names[EditorGUILayout.Popup(0, names.ToArray())];
-                    
+                    field.Value = "";
                 }
                 
                 field.Value = EditorGUILayout.TextField(field.Value);               
@@ -53,7 +53,6 @@ namespace VisualCode
             }
             GUILayout.EndVertical();
             GUI.DragWindow(new Rect(0, 0, 1000, 20));
-
         }
 
         protected override Color GetNodeColor()
@@ -61,10 +60,7 @@ namespace VisualCode
             return Color.cyan;
         }
 
-        protected override string GetTitle()
-        {
-            return "Get Variable";
-        }
+   
 
         public override NodeType GetNodeType()
         {

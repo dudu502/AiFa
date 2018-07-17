@@ -10,7 +10,7 @@ namespace VisualCode
         public SetVarNode(Vector2 pos) : base(pos)
         {
             SetRectSize(new Vector2(200, 40));
-
+            Title = "Set";
             for (int i = 0; i < 1; ++i)
             {
                 var field = new FieldNode(i, this);
@@ -47,10 +47,7 @@ namespace VisualCode
         {
             return Color.green;
         }
-        protected override string GetTitle()
-        {
-            return "Set Variable";
-        }
+
 
         public override NodeType GetNodeType()
         {
