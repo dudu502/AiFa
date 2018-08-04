@@ -123,6 +123,17 @@ namespace Observer
                 }
             }
         }
+
+
+
+        #endregion
+
+        #region singleton
+        static Notifier _Ins = new Notifier();
+        public static Notifier Instance
+        {
+            get { return _Ins; }
+        }
         #endregion
     }
 }

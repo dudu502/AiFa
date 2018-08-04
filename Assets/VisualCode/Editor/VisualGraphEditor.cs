@@ -17,6 +17,8 @@ namespace VisualCode
             editor.Show();
             editor.Init();
         }
+        public static string OutPutNodesPath = Environment.CurrentDirectory.Replace("\\", "/")+"/";
+        static string DefaultNodesPath = "VisualCode/Out/";
         public static GUIStyle InputNodeStyle;
         public static GUIStyle OutputNodeStyle;
         private void Init()
@@ -42,15 +44,20 @@ namespace VisualCode
             DrawMenuBar();
             DrawDescInfo();
         }
+        string SavePath = "Assets/"+ DefaultNodesPath;
         void DrawMenuBar()
         {
             GUILayout.BeginArea(new Rect(0, 0, position.width, 20f), EditorStyles.toolbar);
             GUILayout.BeginHorizontal();
             GUILayout.Space(5);
-            if (GUILayout.Button(new GUIContent("Save"), EditorStyles.toolbarButton, GUILayout.Width(35)))
+            SavePath = EditorGUILayout.TextField("Save Path:", SavePath, GUILayout.Width(500));
+          
+            if (SavePath.IndexOf(".bytes")>-1&&GUILayout.Button(new GUIContent("Save"), EditorStyles.toolbarButton, GUILayout.Width(35)))
             {
                 SaveNodes();
             }
+            
+           
             if (GUILayout.Button(new GUIContent("Load"), EditorStyles.toolbarButton, GUILayout.Width(35)))
             {
                 LoadNode();
@@ -107,7 +114,7 @@ namespace VisualCode
 
         private void SaveNodes()
         {
-            string path = Application.dataPath + "/VisualCode/Out/" + "nodes.bytes";
+            string path = OutPutNodesPath + SavePath;
             File.WriteAllBytes(path, VisualGraphData.Write(GraphData));
             AssetDatabase.Refresh();
         }
@@ -127,6 +134,8 @@ namespace VisualCode
                 GraphData = VisualGraphData.Read(bytes);
                 GraphData.Link();
                 WindowOffset = Vector2.zero;
+                var path = AssetDatabase.GetAssetPath(textAsset);
+                SavePath = path;
             }
         }
 
@@ -136,19 +145,22 @@ namespace VisualCode
             WindowDrag = new Vector2();
             WindowOffset = new Vector2();
             RectDesc = new Rect();
+            SavePath = "Assets/"+ DefaultNodesPath;
         }
 
         void LoadNode()
         {
-            var path = EditorUtility.OpenFilePanel("select a node file", Application.dataPath + "/VisualCode/Out/", "bytes");
+            var path = EditorUtility.OpenFilePanel("select a node file", OutPutNodesPath+ DefaultNodesPath, "bytes");
             Debug.Log(path);
-            TextAsset txtAsset = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/VisualCode/Out/" + Path.GetFileName(path));
+            var assetPath = path.Replace(Application.dataPath.Replace("Assets", ""), "");
+            TextAsset txtAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
             if (txtAsset.bytes != null && txtAsset.bytes.Length > 0)
             {
                 var gd = VisualGraphData.Read(txtAsset.bytes);
                 gd.Link();
                 Nodes.AddRange(gd.Nodes);
             }
+            SavePath = assetPath;
         }
         VisualNode OnFocusOnNode(Vector2 pos)
         {
