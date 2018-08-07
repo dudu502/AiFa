@@ -5,7 +5,7 @@ using System.Threading;
 using PathFinding;
 using UnityEngine;
 using UnityEngine.UI;
-public class AStarDemo:MonoBehaviour
+public class AStarDemo1:MonoBehaviour
 {
     public GameObject m_Rect;
     public Texture2D m_Txt;
@@ -26,11 +26,11 @@ public class AStarDemo:MonoBehaviour
                 obj.SetActive(true);
                 obj.transform.SetParent(transform);
                 obj.transform.localScale=Vector3.one;
-                obj.GetComponent<RectTransform>().anchoredPosition=new Vector2(i*10,j*10);
-                var img = obj.GetComponent<Image>();
+                obj.transform.localPosition=new Vector2(i*0.2f,j*0.2f);
+                var img = obj.GetComponent<SpriteRenderer>();
                 array[i,j] = new AStarPoint(i,j);
                 array[i,j].Value = m_Txt.GetPixel(i,j) == Color.white?0:1;
-                array[i,j].Position = obj.GetComponent<RectTransform>().anchoredPosition;
+                array[i,j].Position = obj.transform.localPosition;
                 img.color = array[i,j].Value==0?Color.white:Color.black;
             }
         }
@@ -77,11 +77,11 @@ public class AStarDemo:MonoBehaviour
         obj.transform.SetParent(transform);
         obj.transform.localScale=Vector3.one;
         
-        var img = obj.GetComponent<Image>();
+        var img = obj.GetComponent<SpriteRenderer>();
         img.color = Color.red;
         foreach(var i in list){
             yield return new WaitForSeconds(0.1f);
-            img.GetComponent<RectTransform>().anchoredPosition = map.GetMapData().GetMapPoints()[i.X,i.Y].Position;//new Vector2(10*i.X,10*i.Y);
+            img.transform.localPosition = map.GetMapData().GetMapPoints()[i.X,i.Y].Position;//new Vector2(10*i.X,10*i.Y);
         }
     }
 }

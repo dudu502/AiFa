@@ -7,15 +7,34 @@ namespace PathFinding
 
 public class AStarMapData
 {
-    readonly int[,] m_MazeMap;
-    public AStarMapData(int[,] map)
+    readonly AStarPoint[,] m_MazeMap;
+    public AStarMapData(AStarPoint[,] map)
     {
         m_MazeMap = map;
     }
 
-    public int[,] GetMapData()
+    public AStarPoint[,] GetMapPoints()
     {
         return m_MazeMap;
+    }
+
+    public List<AStarNode> GetAStarNodes(Vector3 position,float range)
+    {
+        List<AStarNode> result = new List<AStarNode>();
+        for(int i=0;i<m_MazeMap.GetLength(0);++i)
+        {
+            for(int j=0;j<m_MazeMap.GetLength(1);++j)
+            {
+                if(m_MazeMap[i,j].Value!=0)continue;
+                float dis = (m_MazeMap[i,j].Position-position).magnitude;
+                if(dis<=range)
+                {
+                    var node = m_MazeMap[i,j].ToNode();
+                    result.Add(m_MazeMap[i,j].ToNode());
+                }
+            }
+        }  
+        return result;
     }
 }
 public class AStarMap
@@ -29,9 +48,10 @@ public class AStarMap
     public AStarMap(AStarMapData map)
     {
         m_MapData = map;
-        CloseList = new List<AStarNode>(map.GetMapData().Length);
-        OpenList = new List<AStarNode>(map.GetMapData().Length);
+        CloseList = new List<AStarNode>(map.GetMapPoints().Length);
+        OpenList = new List<AStarNode>(map.GetMapPoints().Length);
     }
+    public AStarMapData GetMapData(){return m_MapData;}
     public AStarMap Clone()
     {
         return new AStarMap(m_MapData);
@@ -121,7 +141,7 @@ public class AStarMap
     }
     bool CanReach(int x,int y)
     {
-        return m_MapData.GetMapData()[x,y]==0;
+        return m_MapData.GetMapPoints()[x,y].Value==0;
     }
     bool CanReach(AStarNode start,int x,int y,bool IsIgnoreCorner)
     {

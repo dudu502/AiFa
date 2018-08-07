@@ -28,4 +28,22 @@ public class AStarNode
     }
 
 }
+
+public class AStarPoint
+{
+    public int X{get;set;}
+    public int Y{get;set;}
+    public AStarPoint(int xparam,int yparam)
+    {
+        X = xparam;
+        Y = yparam;
+    }
+    public Vector3 Position;
+    public int Value;
+
+    public AStarNode ToNode()
+    {
+        return new AStarNode(X,Y);
+    }
+}
 }

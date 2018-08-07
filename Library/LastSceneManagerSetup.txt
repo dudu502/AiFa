@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/AIBehaviorTree/a1.unity
+- path: Assets/ExplorerGame/Scenes/1.unity
   isLoaded: 1
   isActive: 1
