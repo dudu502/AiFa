@@ -63,11 +63,12 @@ public class AStarMap
         if(OpenList.Count>0)OpenList.Clear();
         AStarNode result = FindPath(start,end,IsIgnoreCorner);
         while(result!=null)
-        {
+        {            
             stackPath.Push(result);
             result = result.ParentNode;
         }
-        return stackPath.ToArray();
+      
+        return stackPath.Count>0?stackPath.ToArray():null;
     }
     AStarNode FindPath(AStarNode start,AStarNode end,bool IsIgnoreCorner)
     {
