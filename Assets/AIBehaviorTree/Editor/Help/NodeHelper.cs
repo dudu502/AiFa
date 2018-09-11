@@ -14,7 +14,7 @@ public class NodeHelper : EditorWindow
     {
         NodeHelper editor = GetWindow<NodeHelper>();
         editor.Show();
-        editor.Init();
+        editor.Init();      
     }
 
     List<NodeHelpData> Nodes;

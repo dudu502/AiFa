@@ -27,7 +27,7 @@ public class NodeEditor : EditorWindow {
     private Vector2 m_BackGroundDrag;
 
     private TextAsset m_CurrentTextAsset = null;
-    private Vector2 WindowScrollPos;
+
     private NodeGraph m_RootNode;
     private void Init()
     {       
@@ -69,6 +69,13 @@ public class NodeEditor : EditorWindow {
             int index = node.Parent.Nodes.IndexOf(node);
             node.Parent.ExchangeChild(index, index - 1);
         }
+    }
+    void OnResetWindowOffset(object data)
+    {
+        var nodes = new List<NodeGraph>();
+        NodeGraph.GetAllNodes(m_RootNode, nodes);
+        nodes.ForEach((n) => n.NodeRect.position -= m_BackGroundOffset);
+        m_BackGroundOffset -= m_BackGroundOffset;
     }
     void OnNodeMoveDownInParentHandler(object data)
     {
@@ -135,14 +142,15 @@ public class NodeEditor : EditorWindow {
         DrawBackGroundGrid(100, 0.4f, Color.gray);
         #region EventHandler
         //right click event
+        m_BackGroundDrag = Vector2.zero;
         if (Event.current.type == EventType.ContextClick)
         {
             var menu = new GenericMenu();
-            var rightClickNode = GetContainMousePosNode(Event.current.mousePosition+ WindowScrollPos);
+            var rightClickNode = GetContainMousePosNode(Event.current.mousePosition );
             if (rightClickNode != null)
             {
-                menu.AddItem(new GUIContent("Create Child"),false, OnNodeMenuClickCreateChildHandler, rightClickNode);                
-                if(rightClickNode.Parent!=null)
+                menu.AddItem(new GUIContent("Create Child"), false, OnNodeMenuClickCreateChildHandler, rightClickNode);
+                if (rightClickNode.Parent != null)
                 {
                     menu.AddItem(new GUIContent("Delete Current"), false, OnNodeDeleteHandler, rightClickNode);
                     if (rightClickNode.Parent.HasPrevChild(rightClickNode))
@@ -155,29 +163,51 @@ public class NodeEditor : EditorWindow {
                     }
                 }
             }
+            else
+            {
+                menu.AddItem(new GUIContent("Refresh"), false, OnResetWindowOffset,null);
+            }
             menu.ShowAsContext();
             Event.current.Use();
         }
+        else if (Event.current.type == EventType.MouseDrag)
+        {
+            if (Event.current.button == 2)
+            {
+                var rightClickNode = GetContainMousePosNode(Event.current.mousePosition );
+                if (rightClickNode == null)
+                {
+                    m_BackGroundDrag = Event.current.delta;
+                    Debug.Log("mouse drag ");
+                    var list = new List<NodeGraph>();
+                    NodeGraph.GetAllNodes(m_RootNode, list);
+                    for (int i = 0; i < list.Count; ++i)
+                    {
+                        list[i].NodeRect.position += m_BackGroundDrag;
+                        Debug.Log(list[i].NodeRect.position + "   " + m_BackGroundDrag);
+                    }
+                    Repaint();
+                }
+            }
+        }
        
         
-        #endregion
-        WindowScrollPos = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height),
-        WindowScrollPos, new Rect(0, 0, 10000, 10000));      
+        #endregion  
         if (m_RootNode != null)
         {
             DrawCurvesImpl(m_RootNode);
             BeginWindows();           
             InitWindow(m_RootNode);
             EndWindows();
-        }        
-        GUI.EndScrollView(); 
+        }
+
     }
+    
 
     void InitWindow(NodeGraph parent)
     {
         string title = parent.Parent == null ? "Root" : string.Format("No.{0}", parent.Parent.Nodes.IndexOf(parent));
-        GUI.color = NodeGraph.GetColorByType((int)parent.Type);
-        parent.NodeRect = new Rect(parent.NodeRect.x, parent.NodeRect.y, parent.NodeRect.width, 200);
+        GUI.color = NodeGraph.GetColorByType((int)parent.Type);    
         parent.NodeRect = GUILayout.Window(parent.ID,parent.NodeRect, DrawNodeWindow, new GUIContent(title),GUILayout.ExpandHeight(true),GUILayout.ExpandWidth(true));
         GUI.color = Color.black;
         for (int i = 0; i < parent.Nodes.Count; ++i)

@@ -6,9 +6,14 @@ using UnityEngine;
 
 namespace PathFinding{
 
-
+/// <summary>
+/// AStar Path 
+/// </summary>
 public class AStar:MonoBehaviour
 { 
+    /// <summary>
+    /// 异步执行数据结构
+    /// </summary>
     public class AyncPathData
     {
         public IList<AStarNode> Paths = null;

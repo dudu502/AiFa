@@ -29,7 +29,7 @@ public class NodeGraph
     public bool FoldOutScriptName = true;
     public NodeGraph()
     {       
-        NodeRect = new Rect(0,0,60,50);
+        NodeRect = new Rect(0,30,60,50);
         ID = GetHashCode();
     }
     
